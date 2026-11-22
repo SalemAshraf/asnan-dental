@@ -38,27 +38,36 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $data = $this->validateData($request);
+        $tz = $request->user()->clinic?->timezone ?? config('app.timezone');
 
         $this->service->assertNoOverlap(
             (int) $data['branch_id'], (int) $data['dentist_id'], $data['chair'] ?? null,
-            Carbon::parse($data['starts_at']), Carbon::parse($data['ends_at'])
+            Carbon::parse($data['starts_at'], $tz)->utc(), Carbon::parse($data['ends_at'], $tz)->utc()
         );
 
-        $appointment = Appointment::create([...$data, 'status' => 'scheduled']);
+        $appointment = Appointment::create([
+            ...$data,
+            'starts_at' => Carbon::parse($data['starts_at'], $tz)->utc(),
+            'ends_at' => Carbon::parse($data['ends_at'], $tz)->utc(),
+            'status' => 'scheduled',
+        ]);
 
-        return redirect()->route('appointments.index', ['day' => Carbon::parse($data['starts_at'])->toDateString()]);
+        return redirect()->route('appointments.index', ['day' => Carbon::parse($data['starts_at'], $tz)->toDateString()]);
     }
 
     public function update(Request $request, Appointment $appointment)
     {
         $data = $this->validateData($request);
+        $tz = $request->user()->clinic?->timezone ?? config('app.timezone');
 
         $this->service->assertNoOverlap(
             (int) $data['branch_id'], (int) $data['dentist_id'], $data['chair'] ?? null,
-            Carbon::parse($data['starts_at']), Carbon::parse($data['ends_at']),
+            Carbon::parse($data['starts_at'], $tz)->utc(), Carbon::parse($data['ends_at'], $tz)->utc(),
             $appointment->id
         );
 
+        $data['starts_at'] = Carbon::parse($data['starts_at'], $tz)->utc();
+        $data['ends_at'] = Carbon::parse($data['ends_at'], $tz)->utc();
         $appointment->update($data);
 
         return back();

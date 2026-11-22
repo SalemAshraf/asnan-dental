@@ -1,4 +1,6 @@
-# أسنان (Asnan) — Dental Clinic Management SaaS
+# بسمة (Basma) — Dental Clinic Management SaaS
+
+> Product name approved by the owner: بسمة / Basma (working repo slug stays asnan-dental).
 
 Multi-tenant dental clinic management for Egypt & the Gulf. Arabic-first.
 Laravel 13 + Vue 3 (Inertia) + Tailwind 4. SQLite for dev/tests, MySQL 8-compatible migrations.

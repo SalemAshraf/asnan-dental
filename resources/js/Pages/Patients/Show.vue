@@ -34,9 +34,9 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
 
 <template>
     <AppLayout>
-        <div class="flex items-center justify-between mb-4">
-            <div>
-                <h1 class="text-2xl font-bold">{{ patient.full_name }} <span class="text-gray-400 text-sm">ملف #{{ patient.file_no }}</span></h1>
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div class="min-w-0">
+                <h1 class="text-xl md:text-2xl font-bold break-words">{{ patient.full_name }} <span class="text-gray-400 text-sm">ملف #{{ patient.file_no }}</span></h1>
                 <p class="text-gray-500 text-sm" dir="ltr">{{ patient.phone }}<span v-if="patient.whatsapp"> · واتساب {{ patient.whatsapp }}</span></p>
             </div>
             <Link :href="`/patients/${patient.id}/edit`" class="border rounded-lg px-4 py-2 text-sm hover:bg-gray-50">تعديل</Link>
@@ -46,14 +46,14 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
             تنبيهات طبية هامة: {{ patient.medical_alerts.join('، ') }}
         </div>
 
-        <div class="flex gap-1 border-b mb-4 text-sm">
+        <div class="flex gap-1 border-b mb-4 text-sm overflow-x-auto whitespace-nowrap">
             <button v-for="t in [['info','الملف'],['chart','خريطة الأسنان'],['plans','خطط العلاج'],['billing','الفواتير'],['consents','الموافقات']]" :key="t[0]"
                 @click="tab = t[0]" class="px-4 py-2 rounded-t"
                 :class="tab === t[0] ? 'bg-white border border-b-0 font-bold text-teal-800' : 'text-gray-500'">{{ t[1] }}</button>
         </div>
 
         <div v-if="tab === 'info'" class="bg-white rounded-xl shadow-sm p-6 text-sm space-y-2 max-w-xl">
-            <p><span class="text-gray-500">تاريخ الميلاد:</span> {{ patient.birth_date ?? '—' }}</p>
+            <p><span class="text-gray-500">تاريخ الميلاد:</span> {{ patient.birth_date ? patient.birth_date.slice(0, 10) : '—' }}</p>
             <p><span class="text-gray-500">النوع:</span> {{ patient.gender === 'male' ? 'ذكر' : patient.gender === 'female' ? 'أنثى' : '—' }}</p>
             <p><span class="text-gray-500">ملاحظات:</span> {{ patient.notes ?? '—' }}</p>
             <h3 class="font-bold pt-3">آخر المواعيد</h3>

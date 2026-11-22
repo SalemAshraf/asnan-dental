@@ -20,18 +20,18 @@ const patientResults = ref([]);
 const searchPatients = async () => {
     if (patientQ.value.length < 2) { patientResults.value = []; return; }
     // Lightweight: reuse the patients page endpoint via fetch for suggestions.
-    const res = await fetch(`/patients?q=${encodeURIComponent(patientQ.value)}`, { headers: { 'X-Inertia': 'true', 'Accept': 'application/json', 'X-Inertia-Version': document.querySelector('meta[name=inertia-version]')?.content ?? '' } });
+    const res = await fetch(`/patients?q=${encodeURIComponent(patientQ.value)}`, { headers: { 'Accept': 'application/json' } });
     if (!res.ok) { patientResults.value = []; return; }
     const data = await res.json();
-    patientResults.value = data.props?.patients?.data?.slice(0, 5) ?? [];
+    patientResults.value = data.patients?.slice(0, 5) ?? [];
 };
 </script>
 
 <template>
     <AppLayout>
-        <div class="flex items-center justify-between mb-4">
-            <h1 class="text-2xl font-bold">المواعيد</h1>
-            <div class="flex items-center gap-2 text-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <h1 class="text-xl md:text-2xl font-bold">المواعيد</h1>
+            <div class="flex flex-wrap items-center gap-2 text-sm">
                 <button @click="shift(-1)" class="border rounded px-3 py-1">← اليوم السابق</button>
                 <input type="date" :value="day" @change="goDay($event.target.value)" class="border rounded px-2 py-1">
                 <button @click="shift(1)" class="border rounded px-3 py-1">اليوم التالي →</button>

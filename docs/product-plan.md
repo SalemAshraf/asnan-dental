@@ -1,4 +1,4 @@
-# Asnan — product plan (v1 → v2)
+# Basma — product plan (v1 → v2)
 
 Owner-approved scope (2026-11-22): research + plan + database design + independent private repo + start of implementation. Dental clinics specifically, not general medicine.
 

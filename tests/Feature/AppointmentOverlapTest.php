@@ -77,4 +77,16 @@ class AppointmentOverlapTest extends TestCase
         $this->actingAs($this->ctx['user'])->post('/appointments', $this->payload())
             ->assertSessionDoesntHaveErrors();
     }
+
+    public function test_wall_time_stored_in_clinic_timezone(): void
+    {
+        $this->actingAs($this->ctx['user'])->post('/appointments', $this->payload([
+            'starts_at' => '2026-11-25 10:00:00', 'ends_at' => '2026-11-25 10:30:00',
+        ]))->assertRedirect();
+
+        $appt = \App\Models\Appointment::latest('id')->first();
+        // Clinic is Africa/Cairo (UTC+2): 10:00 wall time must persist as 08:00 UTC.
+        $this->assertSame('2026-11-25 08:00:00', $appt->starts_at->copy()->utc()->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-11-25 08:30:00', $appt->ends_at->copy()->utc()->format('Y-m-d H:i:s'));
+    }
 }

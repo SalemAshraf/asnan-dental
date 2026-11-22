@@ -36,12 +36,12 @@ const voidIt = () => confirm('إلغاء الفاتورة؟') && router.post(`/i
                     </tbody>
                 </table>
                 <div class="text-sm mt-3 space-y-1 text-left" dir="ltr">
-                    <div class="flex justify-between"><span>Subtotal</span><span>{{ fmt(invoice.subtotal_minor, invoice.currency) }}</span></div>
-                    <div class="flex justify-between"><span>Discount</span><span>-{{ fmt(invoice.discount_minor, invoice.currency) }}</span></div>
-                    <div class="flex justify-between"><span>VAT {{ invoice.tax_rate_bp / 100 }}%</span><span>{{ fmt(invoice.tax_minor, invoice.currency) }}</span></div>
-                    <div class="flex justify-between font-bold text-lg"><span>Total</span><span>{{ fmt(invoice.total_minor, invoice.currency) }}</span></div>
-                    <div class="flex justify-between text-teal-700"><span>Paid</span><span>{{ fmt(invoice.paid_minor, invoice.currency) }}</span></div>
-                    <div class="flex justify-between font-bold text-red-700"><span>Balance</span><span>{{ fmt(invoice.total_minor - invoice.paid_minor, invoice.currency) }}</span></div>
+                    <div class="flex justify-between"><span>الإجمالي الفرعي</span><span>{{ fmt(invoice.subtotal_minor, invoice.currency) }}</span></div>
+                    <div class="flex justify-between"><span>الخصم</span><span>-{{ fmt(invoice.discount_minor, invoice.currency) }}</span></div>
+                    <div class="flex justify-between"><span>ضريبة القيمة المضافة {{ invoice.tax_rate_bp / 100 }}%</span><span>{{ fmt(invoice.tax_minor, invoice.currency) }}</span></div>
+                    <div class="flex justify-between font-bold text-lg"><span>الإجمالي</span><span>{{ fmt(invoice.total_minor, invoice.currency) }}</span></div>
+                    <div class="flex justify-between text-teal-700"><span>المدفوع</span><span>{{ fmt(invoice.paid_minor, invoice.currency) }}</span></div>
+                    <div class="flex justify-between font-bold text-red-700"><span>المتبقي</span><span>{{ fmt(invoice.total_minor - invoice.paid_minor, invoice.currency) }}</span></div>
                 </div>
             </div>
 

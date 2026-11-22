@@ -54,4 +54,19 @@ class TenantIsolationTest extends TestCase
             'full_name' => 'مريض جديد',
         ]);
     }
+
+    public function test_patient_json_search_scoped_and_shaped(): void
+    {
+        $userA = User::factory()->create();
+        Patient::factory()->create(['clinic_id' => $userA->clinic_id, 'full_name' => 'مريض البحث']);
+        Patient::factory()->create(['full_name' => 'مريض البحث الآخر']);
+
+        $this->actingAs($userA)
+            ->getJson('/patients?q=' . urlencode('مريض البحث'))
+            ->assertOk()
+            ->assertJsonCount(1, 'patients')
+            ->assertJsonPath('patients.0.full_name', 'مريض البحث')
+            ->assertJsonMissingPath('patients.0.medical_alerts')
+            ->assertJsonMissingPath('patients.0.national_id');
+    }
 }

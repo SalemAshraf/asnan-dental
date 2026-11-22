@@ -20,6 +20,12 @@ class PatientController extends Controller
                 ->orWhere('file_no', (int) $search ?: 0));
         }
 
+        if ($request->wantsJson() && !$request->header('X-Inertia')) {
+            return response()->json([
+                'patients' => $query->limit(10)->get(['id', 'full_name', 'phone', 'file_no']),
+            ]);
+        }
+
         return Inertia::render('Patients/Index', [
             'patients' => $query->paginate(15)->withQueryString(),
             'filters' => ['q' => $request->query('q', '')],

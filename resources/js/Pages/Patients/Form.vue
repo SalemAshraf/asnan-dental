@@ -23,48 +23,46 @@ const submit = () => {
 
 <template>
     <AppLayout>
-        <h1 class="text-2xl font-bold mb-4">{{ patient ? 'تعديل بيانات المريض' : 'مريض جديد' }}</h1>
-        <form @submit.prevent="submit" class="bg-white rounded-xl shadow-sm p-6 grid md:grid-cols-2 gap-4 max-w-3xl">
+        <h1 class="mb-5 text-2xl font-bold text-ink-900">{{ patient ? 'تعديل بيانات المريض' : 'مريض جديد' }}</h1>
+        <form @submit.prevent="submit" class="card grid max-w-3xl gap-4 md:grid-cols-2">
             <div>
-                <label class="block text-sm mb-1">الاسم الكامل *</label>
-                <input v-model="form.full_name" class="w-full border rounded-lg px-3 py-2">
-                <p v-if="form.errors.full_name" class="text-red-600 text-xs mt-1">{{ form.errors.full_name }}</p>
+                <label class="label">الاسم الكامل *</label>
+                <input v-model="form.full_name" class="input">
+                <p v-if="form.errors.full_name" class="mt-1 text-xs text-rose-600">{{ form.errors.full_name }}</p>
             </div>
             <div>
-                <label class="block text-sm mb-1">الهاتف *</label>
-                <input v-model="form.phone" dir="ltr" class="w-full border rounded-lg px-3 py-2">
-                <p v-if="form.errors.phone" class="text-red-600 text-xs mt-1">{{ form.errors.phone }}</p>
+                <label class="label">الهاتف *</label>
+                <input v-model="form.phone" dir="ltr" class="input">
+                <p v-if="form.errors.phone" class="mt-1 text-xs text-rose-600">{{ form.errors.phone }}</p>
             </div>
             <div>
-                <label class="block text-sm mb-1">واتساب</label>
-                <input v-model="form.whatsapp" dir="ltr" class="w-full border rounded-lg px-3 py-2">
+                <label class="label">واتساب</label>
+                <input v-model="form.whatsapp" dir="ltr" class="input">
             </div>
             <div>
-                <label class="block text-sm mb-1">تاريخ الميلاد</label>
-                <input v-model="form.birth_date" type="date" class="w-full border rounded-lg px-3 py-2">
+                <label class="label">تاريخ الميلاد</label>
+                <input v-model="form.birth_date" type="date" class="input">
             </div>
             <div>
-                <label class="block text-sm mb-1">النوع</label>
-                <select v-model="form.gender" class="w-full border rounded-lg px-3 py-2">
+                <label class="label">النوع</label>
+                <select v-model="form.gender" class="input">
                     <option value="">—</option><option value="male">ذكر</option><option value="female">أنثى</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm mb-1">الرقم القومي</label>
-                <input v-model="form.national_id" dir="ltr" class="w-full border rounded-lg px-3 py-2">
+                <label class="label">الرقم القومي</label>
+                <input v-model="form.national_id" dir="ltr" class="input">
             </div>
             <div class="md:col-span-2">
-                <label class="block text-sm mb-1">تنبيهات طبية (حساسيات، أمراض مزمنة) — افصل بفاصلة</label>
-                <input v-model="form.medical_alerts" class="w-full border rounded-lg px-3 py-2">
+                <label class="label">تنبيهات طبية (حساسيات، أمراض مزمنة) — افصل بفاصلة</label>
+                <input v-model="form.medical_alerts" class="input">
             </div>
             <div class="md:col-span-2">
-                <label class="block text-sm mb-1">ملاحظات</label>
-                <textarea v-model="form.notes" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea>
+                <label class="label">ملاحظات</label>
+                <textarea v-model="form.notes" rows="2" class="input"></textarea>
             </div>
             <div class="md:col-span-2">
-                <button :disabled="form.processing" class="bg-teal-700 text-white rounded-lg px-6 py-2 hover:bg-teal-600 disabled:opacity-50">
-                    حفظ
-                </button>
+                <button :disabled="form.processing" class="btn-primary">حفظ</button>
             </div>
         </form>
     </AppLayout>

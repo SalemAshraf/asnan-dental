@@ -1,5 +1,64 @@
 @import 'tailwindcss';
 
 @theme {
-    --font-sans: 'Segoe UI', 'Cairo', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+
+    --color-canvas: #F0F5F6;
+    --color-ink-900: #0B1F21;
+    --color-ink-800: #14302F;
+    --color-ink-700: #1E4442;
+
+    --color-brand-50: #EFFAF9;
+    --color-brand-100: #D7F1EF;
+    --color-brand-200: #B0E3E0;
+    --color-brand-300: #7DCEC9;
+    --color-brand-400: #45B3AD;
+    --color-brand-500: #27958F;
+    --color-brand-600: #177A75;
+    --color-brand-700: #12625F;
+    --color-brand-800: #104E4C;
+    --color-brand-900: #0D3F3E;
+}
+
+@layer base {
+    html { font-family: var(--font-sans); line-height: 1.65; }
+    body { font-feature-settings: 'tnum' 1; }
+    h1 { letter-spacing: -0.01em; }
+    ::selection { background: var(--color-brand-200); }
+}
+
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-1 disabled:opacity-50;
+}
+
+@layer components {
+    .btn-primary { @apply btn bg-brand-700 text-white shadow-sm hover:bg-brand-600; }
+    .btn-secondary { @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-100; }
+    .btn-danger { @apply btn border border-rose-300 bg-white text-rose-700 hover:bg-rose-50; }
+    .btn-sm { @apply px-3 py-1.5 text-xs; }
+    .input { @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-brand-600 focus:ring-1 focus:ring-brand-500 focus:outline-none; }
+    input[type='date'].input, input[type='datetime-local'].input { @apply min-w-[11rem] px-2 text-[13px]; font-variant-numeric: tabular-nums; }
+    .label { @apply mb-1 block text-sm font-medium text-slate-700; }
+    .card { @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]; }
+    .th { @apply px-4 py-3 text-start text-xs font-semibold uppercase tracking-wide text-slate-500; }
+    .td { @apply px-4 py-3 text-sm; }
+}
+
+@media (max-width: 640px) {
+    table.stack thead { display: none; }
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+    table.stack tr { padding: 0.5rem 0.25rem; border-bottom: 1px solid #e2e8f0; }
+    table.stack td { display: flex; justify-content: space-between; gap: 1rem; padding: 0.25rem 0.75rem; text-align: end; }
+    table.stack td::before { content: attr(data-label); color: #64748b; font-size: 0.75rem; text-align: start; flex-shrink: 0; }
+    table.stack td[data-label=""]::before { display: none; }
+}
+
+* { scrollbar-width: thin; scrollbar-color: #9DB8B6 transparent; }
+@supports selector(::-webkit-scrollbar) {
+    * { scrollbar-width: auto; scrollbar-color: auto; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #B3CCC9; border-radius: 99px; border: 2px solid transparent; background-clip: content-box; min-height: 40px; min-width: 40px; }
+    ::-webkit-scrollbar-thumb:hover { background: #82A8A4; background-clip: content-box; }
+    ::-webkit-scrollbar-corner { background: transparent; }
 }

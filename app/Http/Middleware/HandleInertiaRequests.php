@@ -25,6 +25,11 @@ class HandleInertiaRequests extends Middleware
                 'clinic_id' => $request->user()->clinic_id,
                 'branch_id' => $request->user()->branch_id,
             ] : null,
+            'auth.clinic' => fn () => $request->user()?->clinic?->only(['name', 'currency', 'timezone']),
+            'flash' => fn () => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
         ];
     }
 }

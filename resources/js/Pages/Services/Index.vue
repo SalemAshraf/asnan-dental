@@ -1,5 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import Badge from '@/Components/Badge.vue';
+import Icon from '@/Components/Icon.vue';
 import { fmt } from '@/money';
 import { useForm } from '@inertiajs/vue3';
 
@@ -12,32 +14,39 @@ const save = () => form.post('/services', { preserveScroll: true, onSuccess: () 
 
 <template>
     <AppLayout>
-        <h1 class="text-2xl font-bold mb-4">قائمة الخدمات والأسعار</h1>
-        <form @submit.prevent="save" class="bg-white rounded-xl shadow-sm p-4 mb-4 grid md:grid-cols-6 gap-2 text-sm items-end">
-            <input v-model="form.code" placeholder="كود" class="border rounded px-2 py-1" dir="ltr">
-            <input v-model="form.name_ar" placeholder="الاسم بالعربية *" class="border rounded px-2 py-1">
-            <select v-model="form.category" class="border rounded px-2 py-1">
-                <option v-for="(l, k) in catAr" :key="k" :value="k">{{ l }}</option>
-            </select>
-            <input v-model="form.price" type="number" step="0.01" min="0" placeholder="السعر *" class="border rounded px-2 py-1" dir="ltr">
-            <input v-model="form.duration_min" type="number" min="5" placeholder="المدة (د)" class="border rounded px-2 py-1" dir="ltr">
-            <button class="bg-teal-700 text-white rounded px-3 py-1.5">+ إضافة</button>
-        </form>
-        <p v-if="form.errors.code" class="text-red-600 text-xs mb-2">{{ form.errors.code }}</p>
+        <div class="mb-5">
+            <h1 class="text-2xl font-bold text-ink-900">قائمة الخدمات والأسعار</h1>
+            <p class="text-sm text-slate-500">تُستخدم الخدمات في بنود خطط العلاج والفواتير</p>
+        </div>
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-gray-500"><tr>
-                    <th class="p-3 text-right">كود</th><th class="text-right">الخدمة</th>
-                    <th class="text-right">الفئة</th><th class="text-right">السعر</th><th class="text-right">المدة</th>
-                </tr></thead>
-                <tbody>
-                    <tr v-for="s in services" :key="s.id" class="border-t">
-                        <td class="p-3" dir="ltr">{{ s.code ?? '—' }}</td>
-                        <td class="font-medium">{{ s.name_ar }}</td>
-                        <td>{{ catAr[s.category] }}</td>
-                        <td>{{ fmt(s.default_price_minor) }}</td>
-                        <td dir="ltr">{{ s.duration_min }} min</td>
+        <form @submit.prevent="save" class="card mb-4 grid items-end gap-2 text-sm md:grid-cols-6">
+            <div><label class="label">كود</label><input v-model="form.code" class="input" dir="ltr"></div>
+            <div class="md:col-span-2"><label class="label">الاسم بالعربية *</label><input v-model="form.name_ar" class="input"></div>
+            <div><label class="label">الفئة</label>
+                <select v-model="form.category" class="input">
+                    <option v-for="(l, k) in catAr" :key="k" :value="k">{{ l }}</option>
+                </select></div>
+            <div><label class="label">السعر *</label><input v-model="form.price" type="number" step="0.01" min="0" class="input" dir="ltr"></div>
+            <div><label class="label">المدة (دقيقة)</label><input v-model="form.duration_min" type="number" min="5" class="input" dir="ltr"></div>
+            <div class="md:col-span-6"><button class="btn-primary"><Icon name="plus" :size="16" /> إضافة خدمة</button></div>
+        </form>
+        <p v-if="form.errors.code" class="mb-2 text-xs text-rose-600">{{ form.errors.code }}</p>
+
+        <div class="card !p-0 overflow-hidden">
+            <table class="stack w-full">
+                <thead class="border-b border-slate-200 bg-slate-50">
+                    <tr>
+                        <th class="th">كود</th><th class="th">الخدمة</th>
+                        <th class="th">الفئة</th><th class="th">السعر</th><th class="th">المدة</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr v-for="s in services" :key="s.id" class="transition hover:bg-brand-50/50">
+                        <td class="td tabular-nums text-slate-500" dir="ltr" data-label="كود">{{ s.code ?? '—' }}</td>
+                        <td class="td font-semibold text-ink-900" data-label="الخدمة">{{ s.name_ar }}</td>
+                        <td class="td" data-label="الفئة"><Badge tone="teal">{{ catAr[s.category] }}</Badge></td>
+                        <td class="td tabular-nums" data-label="السعر">{{ fmt(s.default_price_minor) }}</td>
+                        <td class="td tabular-nums text-slate-500" data-label="المدة"><span dir="ltr">{{ s.duration_min }}</span> دقيقة</td>
                     </tr>
                 </tbody>
             </table>

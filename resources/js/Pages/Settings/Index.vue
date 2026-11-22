@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import Badge from '@/Components/Badge.vue';
 import { useForm } from '@inertiajs/vue3';
 
 const props = defineProps({ clinic: Object, branches: Array, users: Array, roles: Array });
@@ -16,63 +17,69 @@ const toggle = (id) => useForm({}).post(`/settings/users/${id}/toggle`, { preser
 
 <template>
     <AppLayout>
-        <h1 class="text-2xl font-bold mb-4">إعدادات العيادة</h1>
+        <h1 class="mb-5 text-2xl font-bold text-ink-900">إعدادات العيادة</h1>
 
-        <form @submit.prevent="clinicForm.put('/settings/clinic')" class="bg-white rounded-xl shadow-sm p-4 mb-4 grid md:grid-cols-3 gap-3 text-sm">
-            <div><label class="text-xs text-gray-500">اسم العيادة</label>
-                <input v-model="clinicForm.name" class="w-full border rounded px-2 py-1"></div>
-            <div><label class="text-xs text-gray-500">الهاتف</label>
-                <input v-model="clinicForm.phone" class="w-full border rounded px-2 py-1" dir="ltr"></div>
-            <div><label class="text-xs text-gray-500">العنوان</label>
-                <input v-model="clinicForm.address" class="w-full border rounded px-2 py-1"></div>
-            <div><label class="text-xs text-gray-500">نسبة الضريبة (نقاط أساس، مثال: 500 = 5%). اضبطها بعد التحقق من القواعد المطبقة على عيادتك — لا توجد نسبة افتراضية ملزمة</label>
-                <input v-model="clinicForm.tax_rate_bp" type="number" min="0" max="10000" class="w-full border rounded px-2 py-1" dir="ltr"></div>
-            <div><label class="text-xs text-gray-500">بادئة الفواتير</label>
-                <input v-model="clinicForm.invoice_prefix" class="w-full border rounded px-2 py-1" dir="ltr"></div>
-            <div class="self-end"><button class="bg-teal-700 text-white rounded px-4 py-1.5">حفظ</button></div>
+        <form @submit.prevent="clinicForm.put('/settings/clinic')" class="card mb-4 grid gap-3 text-sm md:grid-cols-3">
+            <div><label class="label">اسم العيادة</label>
+                <input v-model="clinicForm.name" class="input"></div>
+            <div><label class="label">الهاتف</label>
+                <input v-model="clinicForm.phone" class="input" dir="ltr"></div>
+            <div><label class="label">العنوان</label>
+                <input v-model="clinicForm.address" class="input"></div>
+            <div><label class="label">نسبة الضريبة (نقاط أساس، مثال: 500 = 5%). اضبطها بعد التحقق من القواعد المطبقة على عيادتك — لا توجد نسبة افتراضية ملزمة</label>
+                <input v-model="clinicForm.tax_rate_bp" type="number" min="0" max="10000" class="input" dir="ltr"></div>
+            <div><label class="label">بادئة الفواتير</label>
+                <input v-model="clinicForm.invoice_prefix" class="input" dir="ltr"></div>
+            <div class="self-end"><button class="btn-primary">حفظ</button></div>
         </form>
 
-        <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
-            <h2 class="font-bold mb-2">الفروع</h2>
-            <ul class="text-sm mb-3">
-                <li v-for="b in branches" :key="b.id" class="border-b py-1">{{ b.name }} <span class="text-gray-400">{{ b.address }}</span></li>
+        <div class="card mb-4">
+            <h2 class="mb-3 font-bold text-ink-900">الفروع</h2>
+            <ul class="mb-3 divide-y divide-slate-100 text-sm">
+                <li v-for="b in branches" :key="b.id" class="py-2"><span class="font-medium text-ink-900">{{ b.name }}</span> <span class="text-slate-400">{{ b.address }}</span></li>
             </ul>
-            <form @submit.prevent="branchForm.post('/settings/branches', { onSuccess: () => branchForm.reset() })" class="flex gap-2 text-sm">
-                <input v-model="branchForm.name" placeholder="اسم الفرع *" class="border rounded px-2 py-1">
-                <input v-model="branchForm.address" placeholder="العنوان" class="border rounded px-2 py-1 flex-1">
-                <button class="bg-gray-800 text-white rounded px-3 py-1">+ فرع</button>
+            <form @submit.prevent="branchForm.post('/settings/branches', { onSuccess: () => branchForm.reset() })" class="flex flex-wrap gap-2 text-sm">
+                <input v-model="branchForm.name" placeholder="اسم الفرع *" class="input !w-48">
+                <input v-model="branchForm.address" placeholder="العنوان" class="input flex-1">
+                <button class="btn-secondary">+ فرع</button>
             </form>
-            <p v-if="branchForm.errors.name" class="text-red-600 text-xs mt-1">{{ branchForm.errors.name }}</p>
+            <p v-if="branchForm.errors.name" class="mt-1 text-xs text-rose-600">{{ branchForm.errors.name }}</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-4">
-            <h2 class="font-bold mb-2">المستخدمون</h2>
-            <table class="w-full text-sm mb-3">
-                <thead class="text-gray-500"><tr><th class="text-right py-1">الاسم</th><th class="text-right">البريد</th><th class="text-right">الدور</th><th class="text-right">الحالة</th><th></th></tr></thead>
-                <tbody>
-                    <tr v-for="u in users" :key="u.id" class="border-t">
-                        <td class="py-1">{{ u.name }}</td>
-                        <td dir="ltr">{{ u.email }}</td>
-                        <td>{{ roleAr[u.role] }}</td>
-                        <td>{{ u.is_active ? 'نشط' : 'موقوف' }}</td>
-                        <td><button @click="toggle(u.id)" class="text-xs border rounded px-2 py-0.5">{{ u.is_active ? 'إيقاف' : 'تفعيل' }}</button></td>
-                    </tr>
-                </tbody>
-            </table>
-            <form @submit.prevent="userForm.post('/settings/users', { onSuccess: () => userForm.reset() })" class="grid md:grid-cols-6 gap-2 text-sm items-end">
-                <input v-model="userForm.name" placeholder="الاسم *" class="border rounded px-2 py-1">
-                <input v-model="userForm.email" type="email" placeholder="البريد *" class="border rounded px-2 py-1" dir="ltr">
-                <select v-model="userForm.role" class="border rounded px-2 py-1">
-                    <option v-for="r in roles" :key="r" :value="r">{{ roleAr[r] }}</option>
-                </select>
-                <select v-model="userForm.branch_id" class="border rounded px-2 py-1">
-                    <option value="">بدون فرع</option>
-                    <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option>
-                </select>
-                <input v-model="userForm.password" type="password" placeholder="كلمة مرور *" class="border rounded px-2 py-1" dir="ltr">
-                <button class="bg-gray-800 text-white rounded px-3 py-1.5">+ مستخدم</button>
+        <div class="card">
+            <h2 class="mb-3 font-bold text-ink-900">المستخدمون</h2>
+            <div class="mb-4 overflow-x-auto">
+                <table class="w-full min-w-[560px] text-sm">
+                    <thead class="border-b border-slate-200">
+                        <tr><th class="th !px-0">الاسم</th><th class="th">البريد</th><th class="th">الدور</th><th class="th">الحالة</th><th class="th !px-0"></th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr v-for="u in users" :key="u.id">
+                            <td class="td !px-0 font-medium text-ink-900">{{ u.name }}</td>
+                            <td class="td tabular-nums text-slate-500" dir="ltr">{{ u.email }}</td>
+                            <td class="td">{{ roleAr[u.role] ?? u.role }}</td>
+                            <td class="td"><Badge :tone="u.is_active ? 'green' : 'slate'">{{ u.is_active ? 'نشط' : 'موقوف' }}</Badge></td>
+                            <td class="td !px-0 text-end"><button @click="toggle(u.id)" class="btn-secondary btn-sm">{{ u.is_active ? 'إيقاف' : 'تفعيل' }}</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <form @submit.prevent="userForm.post('/settings/users', { onSuccess: () => userForm.reset() })" class="grid items-end gap-2 text-sm md:grid-cols-6">
+                <div><label class="label">الاسم *</label><input v-model="userForm.name" class="input"></div>
+                <div><label class="label">البريد *</label><input v-model="userForm.email" type="email" class="input" dir="ltr"></div>
+                <div><label class="label">الدور</label>
+                    <select v-model="userForm.role" class="input">
+                        <option v-for="r in roles" :key="r" :value="r">{{ roleAr[r] ?? r }}</option>
+                    </select></div>
+                <div><label class="label">الفرع</label>
+                    <select v-model="userForm.branch_id" class="input">
+                        <option value="">بدون فرع</option>
+                        <option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option>
+                    </select></div>
+                <div><label class="label">كلمة مرور *</label><input v-model="userForm.password" type="password" class="input" dir="ltr"></div>
+                <div><button class="btn-primary">+ مستخدم</button></div>
             </form>
-            <p v-for="(e, k) in userForm.errors" :key="k" class="text-red-600 text-xs mt-1">{{ e }}</p>
+            <p v-for="(e, k) in userForm.errors" :key="k" class="mt-1 text-xs text-rose-600">{{ e }}</p>
         </div>
     </AppLayout>
 </template>

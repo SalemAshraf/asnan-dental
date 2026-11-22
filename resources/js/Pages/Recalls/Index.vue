@@ -5,6 +5,7 @@ import EmptyState from '@/Components/EmptyState.vue';
 import Icon from '@/Components/Icon.vue';
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { t } from '@/i18n';
 
 const props = defineProps({ pending: Array, recentDone: Array, today: String });
 const page = usePage();
@@ -41,7 +42,7 @@ const searchPatients = async () => {
 const save = () => form.post('/recalls', { onSuccess: () => { showForm.value = false; form.reset(); patientQ.value = ''; } });
 const setStatus = (id, status) => router.post(`/recalls/${id}/transition`, { status }, { preserveScroll: true });
 
-const statusLabel = { pending: 'قادم', done: 'تم', cancelled: 'ملغي' };
+
 const overdue = computed(() => props.pending.filter((r) => r.overdue));
 const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
 </script>
@@ -50,68 +51,68 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
     <AppLayout>
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
-                <h1 class="text-2xl font-bold text-ink-900">تذكيرات المتابعة</h1>
-                <p class="text-sm text-slate-500">مرضى محتاجين رجوع للعيادة. زر واتساب يفتح محادثة على جهازك برسالة تذكير جاهزة ترسلها بنفسك — لا يُرسل أي شيء تلقائيًا، والرسالة لا تحتوي تفاصيل علاجية.</p>
+                <h1 class="text-2xl font-bold text-ink-900">{{ t('rec.title') }}</h1>
+                <p class="text-sm text-slate-500">{{ t('rec.subtitle') }}</p>
             </div>
-            <button @click="showForm = !showForm" class="btn-primary"><Icon name="plus" :size="16" /> تذكير جديد</button>
+            <button @click="showForm = !showForm" class="btn-primary"><Icon name="plus" :size="16" /> {{ t('rec.new') }}</button>
         </div>
 
         <form v-if="showForm" @submit.prevent="save" class="card mb-4 grid gap-3 text-sm md:grid-cols-4">
             <div class="relative md:col-span-2">
-                <label class="label">المريض</label>
-                <input v-model="patientQ" @input="searchPatients" placeholder="ابحث بالاسم أو الهاتف" class="input">
+                <label class="label">{{ t('rec.form.patient') }}</label>
+                <input v-model="patientQ" @input="searchPatients" :placeholder="t('rec.form.patientSearch')" class="input">
                 <div v-if="patientResults.length" class="absolute z-10 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
                     <div v-for="p in patientResults" :key="p.id" @click="form.patient_id = p.id; patientQ = p.full_name + ' #' + p.file_no; patientResults = []"
                         class="cursor-pointer border-b border-slate-100 px-3 py-2 last:border-0 hover:bg-brand-50">{{ p.full_name }} <span class="text-slate-400">#{{ p.file_no }}</span></div>
                 </div>
                 <p v-if="form.errors.patient_id" class="mt-1 text-xs text-rose-600">{{ form.errors.patient_id }}</p>
             </div>
-            <div><label class="label">تاريخ الاستحقاق *</label>
+            <div><label class="label">{{ t('rec.form.dueDate') }}</label>
                 <input v-model="form.due_date" type="date" required class="input">
                 <p v-if="form.errors.due_date" class="mt-1 text-xs text-rose-600">{{ form.errors.due_date }}</p></div>
-            <div><label class="label">السبب</label>
-                <input v-model="form.reason" placeholder="مثال: مراجعة تنظيف دورية" class="input"></div>
-            <div class="md:col-span-4"><button class="btn-primary">حفظ التذكير</button></div>
+            <div><label class="label">{{ t('rec.form.reason') }}</label>
+                <input v-model="form.reason" :placeholder="t('rec.form.reasonPh')" class="input"></div>
+            <div class="md:col-span-4"><button class="btn-primary">{{ t('rec.form.save') }}</button></div>
         </form>
 
         <div v-if="overdue.length" class="card mb-4 border-rose-200">
-            <h2 class="mb-3 font-bold text-rose-700">متأخرة ({{ overdue.length }})</h2>
+            <h2 class="mb-3 font-bold text-rose-700">{{ t('rec.overdue', { n: overdue.length }) }}</h2>
             <div class="divide-y divide-slate-100">
                 <div v-for="r in overdue" :key="r.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">
                     <span class="min-w-0 flex-1">
                         <span class="block truncate font-semibold text-ink-900">{{ r.patient?.full_name }} <span class="font-normal text-slate-400">#{{ r.patient?.file_no }}</span></span>
-                        <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || 'متابعة' }} · كان مستحقًا <span class="tabular-nums" dir="ltr">{{ dstr(r.due_date) }}</span></span>
+                        <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || t('rec.defaultReason') }} · {{ t('rec.wasDue') }} <span class="tabular-nums" dir="ltr">{{ dstr(r.due_date) }}</span></span>
                     </span>
-                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm" title="يفتح محادثة واتساب برسالة جاهزة — الإرسال يدوي من جهازك"><Icon name="whatsapp" :size="15" /> واتساب</a>
-                    <button @click="setStatus(r.id, 'done')" class="btn-primary btn-sm">تم التواصل/الحجز</button>
-                    <button @click="setStatus(r.id, 'cancelled')" class="btn-secondary btn-sm">إلغاء</button>
+                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm" :title="t('rec.whatsappTitle')"><Icon name="whatsapp" :size="15" /> {{ t('rec.whatsapp') }}</a>
+                    <button @click="setStatus(r.id, 'done')" class="btn-primary btn-sm">{{ t('rec.contacted') }}</button>
+                    <button @click="setStatus(r.id, 'cancelled')" class="btn-secondary btn-sm">{{ t('rec.cancel') }}</button>
                 </div>
             </div>
         </div>
 
         <div class="card mb-4">
-            <h2 class="mb-3 font-bold text-ink-900">قادمة ({{ upcoming.length }})</h2>
-            <EmptyState v-if="!upcoming.length" icon="clock" title="لا توجد تذكيرات قادمة" hint="أضف تذكير متابعة من الزر بالأعلى." />
+            <h2 class="mb-3 font-bold text-ink-900">{{ t('rec.upcoming', { n: upcoming.length }) }}</h2>
+            <EmptyState v-if="!upcoming.length" icon="clock" :title="t('rec.emptyUpcoming')" :hint="t('rec.emptyUpcomingHint')" />
             <div v-else class="divide-y divide-slate-100">
                 <div v-for="r in upcoming" :key="r.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">
                     <span class="grid w-24 shrink-0 place-items-center rounded-lg bg-brand-50 py-1.5 text-xs font-bold tabular-nums text-brand-800" dir="ltr">{{ dstr(r.due_date) }}</span>
                     <span class="min-w-0 flex-1">
                         <span class="block truncate font-semibold text-ink-900">{{ r.patient?.full_name }}</span>
-                        <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || 'متابعة' }}</span>
+                        <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || t('rec.defaultReason') }}</span>
                     </span>
-                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm" title="يفتح محادثة واتساب برسالة جاهزة — الإرسال يدوي من جهازك"><Icon name="whatsapp" :size="15" /> واتساب</a>
-                    <button @click="setStatus(r.id, 'done')" class="btn-primary btn-sm">تم</button>
-                    <button @click="setStatus(r.id, 'cancelled')" class="btn-secondary btn-sm">إلغاء</button>
+                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm" :title="t('rec.whatsappTitle')"><Icon name="whatsapp" :size="15" /> {{ t('rec.whatsapp') }}</a>
+                    <button @click="setStatus(r.id, 'done')" class="btn-primary btn-sm">{{ t('rec.done') }}</button>
+                    <button @click="setStatus(r.id, 'cancelled')" class="btn-secondary btn-sm">{{ t('rec.cancel') }}</button>
                 </div>
             </div>
         </div>
 
         <div v-if="recentDone.length" class="card">
-            <h2 class="mb-3 font-bold text-ink-900">آخر المغلقة</h2>
+            <h2 class="mb-3 font-bold text-ink-900">{{ t('rec.closed') }}</h2>
             <div class="divide-y divide-slate-100">
                 <div v-for="r in recentDone" :key="r.id" class="flex items-center gap-3 py-2 text-sm">
                     <span class="min-w-0 flex-1 truncate">{{ r.patient?.full_name }} <span class="text-xs text-slate-400">{{ r.reason || r.service?.name_ar }}</span></span>
-                    <Badge :tone="r.status === 'done' ? 'green' : 'slate'">{{ statusLabel[r.status] }}</Badge>
+                    <Badge :tone="r.status === 'done' ? 'green' : 'slate'">{{ t('rec.st.' + r.status) }}</Badge>
                 </div>
             </div>
         </div>

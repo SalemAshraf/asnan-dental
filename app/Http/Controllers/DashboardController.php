@@ -105,7 +105,7 @@ class DashboardController extends Controller
             'chart' => $chart,
             'todayAppointments' => $todayAppointments,
             'unpaid' => $unpaid,
-            'todayLabel' => $now->translatedFormat('l j F Y'),
+            'todayLabel' => $now->toDateString(),
             'clinic' => auth()->user()->clinic?->only(['name', 'country', 'currency', 'timezone']),
         ]);
     }

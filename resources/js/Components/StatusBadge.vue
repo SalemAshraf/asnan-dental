@@ -1,14 +1,9 @@
 <script setup>
 import Badge from './Badge.vue';
+import { statusLabel } from '@/i18n';
 
 const props = defineProps({ value: { type: String, required: true } });
 
-const labels = {
-    scheduled: 'مجدول', confirmed: 'مؤكد', checked_in: 'وصل', completed: 'تم',
-    cancelled: 'ملغي', no_show: 'لم يحضر',
-    draft: 'مسودة', issued: 'صادرة', partially_paid: 'مدفوعة جزئيًا', paid: 'مدفوعة', void: 'ملغاة',
-    proposed: 'مقترحة', accepted: 'مقبولة', in_progress: 'قيد التنفيذ', rejected: 'مرفوضة',
-};
 const tones = {
     scheduled: 'blue', confirmed: 'violet', checked_in: 'amber', completed: 'green',
     cancelled: 'slate', no_show: 'rose',
@@ -18,5 +13,5 @@ const tones = {
 </script>
 
 <template>
-    <Badge :tone="tones[value] ?? 'slate'">{{ labels[value] ?? value }}</Badge>
+    <Badge :tone="tones[value] ?? 'slate'">{{ statusLabel(value) }}</Badge>
 </template>

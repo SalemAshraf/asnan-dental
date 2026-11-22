@@ -4,7 +4,8 @@ import Odontogram from '@/Components/Odontogram.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import EmptyState from '@/Components/EmptyState.vue';
 import Icon from '@/Components/Icon.vue';
-import { fmt, statusAr } from '@/money';
+import { fmt } from '@/money';
+import { statusLabel, intlLocale } from '@/i18n';
 import { Link, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -71,7 +72,7 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
                 <EmptyState v-if="!appointments.length" icon="appointments" title="لا توجد مواعيد" />
                 <ul v-else class="divide-y divide-slate-100">
                     <li v-for="a in appointments" :key="a.id" class="flex items-center justify-between gap-2 py-2">
-                        <span class="tabular-nums text-slate-600" dir="ltr">{{ new Date(a.starts_at).toLocaleString('ar-EG') }}</span>
+                        <span class="tabular-nums text-slate-600" dir="ltr">{{ new Date(a.starts_at).toLocaleString(intlLocale()) }}</span>
                         <span class="text-slate-500">{{ a.dentist?.name }}</span>
                         <StatusBadge :value="a.status" />
                     </li>
@@ -102,7 +103,7 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
                             <td class="text-end tabular-nums">{{ fmt((i.price_minor - i.discount_minor) * i.qty) }}</td>
                             <td class="w-44 text-end">
                                 <select v-if="can.clinical" :value="i.status" @change="itemStatus(i.id, $event.target.value)" class="input !inline-block !w-auto !px-2 !py-1 text-xs">
-                                    <option v-for="s in ['proposed','accepted','in_progress','completed','rejected']" :key="s" :value="s">{{ statusAr[s] }}</option>
+                                    <option v-for="s in ['proposed','accepted','in_progress','completed','rejected']" :key="s" :value="s">{{ statusLabel(s) }}</option>
                                 </select>
                                 <StatusBadge v-else :value="i.status" />
                             </td>
@@ -117,7 +118,7 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
                 </form>
                 <div class="flex flex-wrap gap-2 text-xs" v-if="can.clinical">
                     <button v-for="s in nextTransitions[p.status] ?? []" :key="s" @click="transition(p.id, s)"
-                        class="btn-secondary btn-sm">→ {{ statusAr[s] }}</button>
+                        class="btn-secondary btn-sm">→ {{ statusLabel(s) }}</button>
                     <button v-if="can.billing && p.items.some(i => i.status === 'accepted')" @click="invoiceFromPlan(p)"
                         class="btn-primary btn-sm">إنشاء فاتورة من البنود المقبولة</button>
                 </div>

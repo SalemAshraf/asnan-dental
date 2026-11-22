@@ -4,7 +4,7 @@ import StatusBadge from '@/Components/StatusBadge.vue';
 import EmptyState from '@/Components/EmptyState.vue';
 import Icon from '@/Components/Icon.vue';
 import { router, useForm } from '@inertiajs/vue3';
-import { t } from '@/i18n';
+import { t, fmtDate, fmtTime } from '@/i18n';
 import { ref } from 'vue';
 
 const props = defineProps({ appointments: Array, week: Array, view: String, day: String, branches: Array, dentists: Array });
@@ -27,8 +27,8 @@ const searchPatients = async () => {
     const data = await res.json();
     patientResults.value = data.patients?.slice(0, 5) ?? [];
 };
-const time = (d) => new Date(d).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-const dayLabel = new Date(props.day + 'T00:00:00').toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
+const time = fmtTime;
+const dayLabel = fmtDate(props.day + 'T00:00:00', { weekday: 'long', day: 'numeric', month: 'long' });
 const setView = (v) => router.get('/appointments', { day: props.day, view: v });
 </script>
 
@@ -85,7 +85,7 @@ const setView = (v) => router.get('/appointments', { day: props.day, view: v });
                 <div v-for="d in week" :key="d.date" class="min-w-24">
                     <button @click="goDay(d.date)" class="mb-2 w-full rounded-lg px-1 py-1.5 text-center text-xs font-bold transition hover:bg-brand-50"
                         :class="d.is_today ? 'bg-brand-700 text-white hover:!bg-brand-600' : d.date === day ? 'bg-brand-100 text-brand-800' : 'text-slate-600'">
-                        {{ d.label }}
+                        {{ fmtDate(d.date + 'T00:00:00', { weekday: 'long', day: 'numeric', month: 'numeric' }) }}
                     </button>
                     <div class="space-y-1.5">
                         <button v-for="a in d.appointments" :key="a.id" @click="goDay(d.date)"

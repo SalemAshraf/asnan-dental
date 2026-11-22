@@ -7,14 +7,15 @@ import EmptyState from '@/Components/EmptyState.vue';
 import Icon from '@/Components/Icon.vue';
 import { fmt } from '@/money';
 import { Link } from '@inertiajs/vue3';
-import { t } from '@/i18n';
+import { t, fmtDate, fmtTime } from '@/i18n';
 
 const props = defineProps({
     stats: Object, apptSeries: Array, collectedSeries: Array, patientsSeries: Array,
     chart: Array, todayAppointments: Array, unpaid: Array, todayLabel: String, clinic: Object,
 });
 const money = (v) => fmt(v, props.clinic?.currency);
-const time = (d) => new Date(d).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+const time = fmtTime;
+const todayText = fmtDate(props.todayLabel, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 </script>
 
 <template>
@@ -22,7 +23,7 @@ const time = (d) => new Date(d).toLocaleTimeString('ar-EG', { hour: '2-digit', m
         <div class="mb-6 flex flex-wrap items-end justify-between gap-2">
             <div>
                 <h1 class="text-2xl font-bold text-ink-900">{{ t('dash.title') }}</h1>
-                <p class="text-sm text-slate-500">{{ clinic?.name }} · {{ todayLabel }}</p>
+                <p class="text-sm text-slate-500">{{ clinic?.name }} · {{ todayText }}</p>
             </div>
             <Link href="/appointments" class="btn-secondary btn-sm">{{ t('dash.allToday') }}</Link>
         </div>

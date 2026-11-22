@@ -10,11 +10,11 @@ const C = {
         nav: [['#product', 'المنتج'], ['#ai', 'Claude'], ['#flow', 'طريقة الشغل'], ['#team', 'الفريق'], ['#faq', 'أسئلة شائعة']],
         aiH: 'اسأل Claude عن عيادتك',
         aiS: 'اربط تقويم بحسابك في Claude واسأل بالعربي أو الإنجليزي عن مواعيدك ومتابعاتك وأرقامك، من غير ما تفتح لوحة التحكم.',
-        aiBadge: 'جديد — في البداية',
+        aiBadge: 'جديد',
         aiQ: ['مواعيد النهاردة وحالة كل واحدة إيه؟', 'أنهي متابعات متأخرة أو مستحقة النهاردة؟', 'دور على ملف المريض فلان برقمه', 'المحصل والمستحق الشهر ده كام؟'],
         aiHow: [['فعّل الربط', 'مالك العيادة يفعّل ربط Claude من إعدادات العيادة.'], ['أضف الرابط في Claude', 'في Claude أضف Custom Connector برابط عيادتك ووافق من صفحة الموافقة.'], ['اسأل', 'اسأل عن الجدول والمتابعات والأرقام. تقدر تفصل الربط في أي وقت من الإعدادات.']],
         aiTrust: ['قراءة فقط: لا يضيف ولا يعدّل ولا يرسل رسائل للمرضى', 'بدون بيانات سريرية: لا خطط علاج ولا تاريخ طبي ولا مخطط أسنان', 'الموافقة لمالك العيادة فقط، والوصول لبيانات عيادته فقط', 'يتوقف فورًا لو الربط اتقفل من الإعدادات أو اتفصل', 'البيانات تنتقل لحسابك في Claude تحت شروط استخدامك أنت معهم'],
-        aiNote: 'الربط جديد ولسه ما اتجرّبش بحساب Claude حقيقي لحد الآن، ويتطلب حساب Claude منفصل بخططه الخاصة. مفيش مساعد ذكاء اصطناعي داخل تقويم نفسه.',
+        aiNote: 'ميزة جديدة في مرحلة الإطلاق الأولى، وتتطلب حساب Claude منفصل بخططه الخاصة. الربط اختياري وتقدر تفصله في أي وقت من الإعدادات.',
         eyebrow: 'نظام إدارة عيادات الأسنان',
         h1: 'من أول حجز لحد تحصيل الفاتورة، كل شغل العيادة في مكان واحد',
         lead: 'ملفات مرضى وخطط علاج وفواتير ومدفوعات ومتابعات، مع تقارير توريك أرقام عيادتك. بالعربي والإنجليزي، ومن الموبايل كمان.',
@@ -34,7 +34,6 @@ const C = {
         team: [['مالك العيادة', 'يشوف كل شيء، يضيف الفريق والفروع، ويضبط الأسعار والإعدادات.'], ['طبيب الأسنان', 'ملفات المرضى وخطط العلاج ومخطط الأسنان والمواعيد.'], ['موظف الاستقبال', 'الحجز والفواتير والمدفوعات والمتابعات، بدون تعديل البيانات السريرية.']],
         teamNote: 'سجل مراجعة بالتعديلات المهمة، وبيانات كل عيادة منفصلة تمامًا عن أي عيادة تانية.',
         mH: 'بالعربي والإنجليزي، وعلى الموبايل', mP: 'الواجهة بتتبدل بين العربية (من اليمين لليسار) والإنجليزية بضغطة واحدة لكل مستخدم، وبتشتغل من متصفح الموبايل.',
-        nH: 'مش موجود لسه', nP: 'علشان الصورة تبقى واضحة: الإرسال التلقائي لرسائل واتساب، الرسائل النصية والإيميلات، الدفع أونلاين، مطالبات التأمين، التطبيق الأصلي للموبايل، ومساعد ذكاء اصطناعي داخل النظام نفسه لسه ما اتبنوش. زر واتساب بيفتح محادثة جاهزة على جهازك ولا يرسل بنفسه.',
         qH: 'أسئلة شائعة',
         faq: [['هل بيانات عيادتي بتظهر لعيادات تانية؟', 'لا. كل حساب عيادة له بياناته المنفصلة. التسجيل بينشئ عيادة جديدة فقط، ولا يضيفك لعيادة موجودة. الانضمام يتم بإضافة من مالك العيادة.'], ['هل النظام بيبعت رسائل واتساب للمرضى؟', 'لا حاليًا. زر واتساب بيفتح محادثة في واتساب على جهازك برسالة جاهزة تبعتها أنت، من غير أي تفاصيل سريرية. الإرسال التلقائي مش متاح لسه.'], ['هل في تطبيق موبايل؟', 'النظام بيشتغل كامل من متصفح الموبايل. التطبيق الأصلي لأندرويد وiOS مش موجود لسه.'], ['كام السعر؟', 'السعر والباقات لسه ما اتحددوش، فمفيش أرقام هنا.'], ['هل إنشاء الحساب مجاني؟', 'أيوه. أنشئ حسابك من غير أي وسيلة دفع، وفريقنا بيفعّل الحساب يدويًا بعد التواصل. حتى التفعيل، الحساب للاطلاع فقط: بياناتك محفوظة وتقدر تشوفها، لكن لا يمكن إضافة أو تعديل أي شيء.'], ['أقدر أجرّب قبل ما أدخل بياناتي؟', 'تقدر تنشئ حساب عيادة جديد وتجرّب. بياناتك التجريبية بتفضل منفصلة عن أي عيادة تانية.']],
         fin: 'جاهز تبدأ؟', finP: 'أنشئ حساب عيادتك وابدأ بإضافة الفريق والمرضى.', foot: 'تقويم', creditA: 'تم تطوير هذا النظام بواسطة', creditB: 'Reviv Solutions', login: 'تسجيل الدخول', register: 'إنشاء حساب', plans: 'الباقات',
@@ -43,11 +42,11 @@ const C = {
         nav: [['#product', 'Product'], ['#ai', 'Claude'], ['#flow', 'How it works'], ['#team', 'Team'], ['#faq', 'FAQ']],
         aiH: 'Ask Claude about your clinic',
         aiS: 'Connect Taqwim to your Claude account and ask, in Arabic or English, about your schedule, recalls and numbers, without opening the dashboard.',
-        aiBadge: 'New, early',
+        aiBadge: 'New',
         aiQ: ["What are today's appointments and their status?", 'Which recalls are due or overdue today?', "Find a patient's file by phone", 'How much was collected and is outstanding this month?'],
         aiHow: [['Turn it on', 'The clinic owner enables the Claude connection in clinic settings.'], ['Add the connector in Claude', 'In Claude, add a Custom Connector with your clinic URL and approve on the consent page.'], ['Ask', 'Ask about the schedule, recalls and numbers. Disconnect any time from settings.']],
         aiTrust: ['Read-only: it cannot add, change or message patients', 'No clinical data: no treatment plans, medical history or odontogram', "Only the clinic owner approves, and only their clinic's data is exposed", 'It stops the moment the switch is off or the connection is removed', 'Data goes to your own Claude account under your terms with them'],
-        aiNote: 'The connector is new and has not been tried with a real Claude account yet, and needs a separate Claude account under its own plans. There is no AI assistant inside Taqwim itself.',
+        aiNote: 'A new feature in early rollout; it needs a separate Claude account under its own plans. The connection is optional and you can disconnect it any time from settings.',
         eyebrow: 'Dental clinic management',
         h1: 'From the first booking to the paid invoice, your whole clinic in one place',
         lead: 'Patient files, treatment plans, invoices and payments, recalls, and reports that show your clinic\u2019s real numbers. In Arabic and English, and on your phone too.',
@@ -67,7 +66,6 @@ const C = {
         team: [['Clinic owner', 'Sees everything, adds the team and branches, and sets prices and settings.'], ['Dentist', 'Patient files, treatment plans, the odontogram and appointments.'], ['Receptionist', 'Booking, invoices, payments and recalls, without editing clinical data.']],
         teamNote: 'An audit log of important changes, and each clinic\u2019s data fully separate from every other clinic.',
         mH: 'Arabic, English and mobile', mP: 'Each user switches between Arabic (right to left) and English in one tap, and everything works from a phone browser.',
-        nH: 'Not available yet', nP: 'To be clear: automatic WhatsApp sending, SMS and email, online payment, insurance claims, a native mobile app and an AI assistant inside the product itself are not built yet. The WhatsApp button opens a ready chat on your device; it does not send by itself.',
         qH: 'Frequently asked questions',
         faq: [['Can other clinics see my data?', 'No. Each clinic account has its own separate data. Signing up only creates a new clinic; it never adds you to an existing one. Joining happens when the clinic owner adds you.'], ['Does it send WhatsApp messages to patients?', 'Not today. The WhatsApp button opens a chat on your device with a ready message you send yourself, with no clinical details. Automatic sending is not available yet.'], ['Is there a mobile app?', 'The system works fully from a phone browser. A native Android or iOS app does not exist yet.'], ['How much does it cost?', 'Pricing and plans are not set yet, so there are no numbers here.'], ['Is creating an account free?', 'Yes. Create your account with no payment method, and our team activates it manually after getting in touch. Until activation the account is read-only: your data stays saved and visible, but nothing can be added or changed.'], ['Can I try it before entering my data?', 'You can create a new clinic account and try it. Your trial data stays separate from every other clinic.']],
         fin: 'Ready to start?', finP: 'Create your clinic account and start by adding your team and patients.', foot: 'Taqwim', creditA: 'Built by', creditB: 'Reviv Solutions', login: 'Log in', register: 'Create account', plans: 'Plans',
@@ -200,13 +198,6 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
                 <div class="mx-auto max-w-3xl px-5 text-center">
                     <h2 class="text-3xl font-bold">{{ c.mH }}</h2>
                     <p class="mt-3 text-slate-600">{{ c.mP }}</p>
-                </div>
-            </section>
-
-            <section class="mx-auto max-w-3xl px-5 py-14">
-                <div class="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-                    <h2 class="text-xl font-bold text-amber-900">{{ c.nH }}</h2>
-                    <p class="mt-2 text-sm leading-6 text-amber-900">{{ c.nP }}</p>
                 </div>
             </section>
 

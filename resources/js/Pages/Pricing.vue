@@ -14,10 +14,10 @@ const submit = () => form.post('/pricing/inquiry', { onSuccess: () => form.reset
 const C = {
     ar: {
         title: 'الباقات والأسعار', sub: 'أنشئ حساب عيادتك مجانًا، بدون أي وسيلة دفع. التفعيل بيتم يدويًا بعد التواصل.',
-        noPlansH: 'الأسعار لسه ما اتحددتش', noPlansP: 'الباقات والأسعار النهائية لسه تحت التحديد. سيب بياناتك وهنتواصل معاك أول ما تتاح، أو ابدأ التجربة المجانية دلوقتي.',
+        noPlansH: 'الأسعار لسه ما اتحددتش', noPlansP: 'الباقات والأسعار النهائية لسه تحت التحديد. سيب بياناتك وهنتواصل معاك أول ما تتاح، أو أنشئ حساب عيادتك مجانًا دلوقتي.',
         contactUs: 'السعر عند التواصل', perMonth: 'شهريًا', perYear: 'سنويًا', yearly: 'سنوي',
         users: 'حتى {n} مستخدم', patients: 'حتى {n} مريض', trial: 'تجربة {n} يوم',
-        start: 'ابدأ بهذه الباقة', startFree: 'ابدأ التجربة المجانية', login: 'عندي حساب', home: 'الرئيسية',
+        start: 'ابدأ بهذه الباقة', startFree: 'ابدأ مجانًا', login: 'عندي حساب', home: 'الرئيسية',
         inqH: 'اطلب التواصل', inqP: 'سيب بياناتك وهنرجعلك.',
         fName: 'الاسم *', fClinic: 'اسم العيادة', fPhone: 'الهاتف', fEmail: 'البريد الإلكتروني', fPlan: 'الباقة محل الاهتمام', fMsg: 'رسالتك (اختياري)',
         fEither: 'الهاتف أو البريد الإلكتروني مطلوب', send: 'إرسال', sentOk: 'وصلتنا رسالتك. هنتواصل معاك.',
@@ -25,10 +25,10 @@ const C = {
     },
     en: {
         title: 'Plans and pricing', sub: 'Create your clinic account for free, with no payment method asked. Activation is manual after we talk.',
-        noPlansH: 'Pricing is not set yet', noPlansP: 'Final plans and prices are still being decided. Leave your details and we will reach out once available, or start the free trial now.',
+        noPlansH: 'Pricing is not set yet', noPlansP: 'Final plans and prices are still being decided. Leave your details and we will reach out once available, or create your free clinic account now.',
         contactUs: 'Price on request', perMonth: '/month', perYear: '/year', yearly: 'yearly',
         users: 'Up to {n} users', patients: 'Up to {n} patients', trial: '{n}-day trial',
-        start: 'Start with this plan', startFree: 'Start the free trial', login: 'I have an account', home: 'Home',
+        start: 'Start with this plan', startFree: 'Start free', login: 'I have an account', home: 'Home',
         inqH: 'Request a call back', inqP: 'Leave your details and we will get back to you.',
         fName: 'Name *', fClinic: 'Clinic name', fPhone: 'Phone', fEmail: 'Email', fPlan: 'Plan of interest', fMsg: 'Your message (optional)',
         fEither: 'Phone or email is required', send: 'Send', sentOk: 'We received your message. We will be in touch.',

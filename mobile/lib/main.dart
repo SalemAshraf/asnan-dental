@@ -226,8 +226,9 @@ class _AppointmentsTabState extends State<AppointmentsTab> {
     _future = widget.api.appointments(_date);
   }
 
-  void _reload() =>
-      setState(() => _future = widget.api.appointments(_date));
+  void _reload() => setState(() {
+        _future = widget.api.appointments(_date);
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -380,7 +381,9 @@ class _RemindersTabState extends State<RemindersTab> {
     _future = widget.api.reminders();
   }
 
-  void _reload() => setState(() => _future = widget.api.reminders());
+  void _reload() => setState(() {
+        _future = widget.api.reminders();
+      });
 
   Future<void> _sendWhatsApp(Map<String, dynamic> reminder) async {
     final patient = reminder['patient'] as Map<String, dynamic>?;
@@ -390,9 +393,13 @@ class _RemindersTabState extends State<RemindersTab> {
     final text = reminder['template_text']?.toString() ?? '';
     final uri = Uri.parse(
         'https://wa.me/${phone.replaceAll('+', '')}?text=${Uri.encodeComponent(text)}');
-    unawaited(launchUrl(uri, mode: LaunchMode.externalApplication));
+    try {
+      unawaited(launchUrl(uri, mode: LaunchMode.externalApplication));
+    } catch (_) {
+      // No WhatsApp on this device; staff can still confirm after sending.
+    }
     // Nothing is marked yet: staff must explicitly confirm below.
-    setState(() => _pendingConfirmId = reminder['id'] as int);
+    if (mounted) setState(() => _pendingConfirmId = reminder['id'] as int);
   }
 
   @override

@@ -13,8 +13,11 @@ class DemoCommandTest extends TestCase
 
     public function test_demo_command_creates_fixture_once_and_refuses_rerun(): void
     {
-        putenv('DEMO_PASSWORD=demo-test-only');
-        $this->artisan('taqwim:demo')->assertSuccessful();
+        $pwFile = tempnam(sys_get_temp_dir(), 'dempw');
+        file_put_contents($pwFile, 'demo-test-only-12+');
+        chmod($pwFile, 0600);
+        $this->artisan('taqwim:demo', ['--password-file' => $pwFile])->assertSuccessful();
+        unlink($pwFile);
         $this->assertDatabaseHas('users', ['email' => 'owner@asnan.test']);
         $clinic = Clinic::where('name', 'عيادة الابتسامة لطب الأسنان')->first();
         $this->assertNotNull($clinic);
@@ -25,6 +28,5 @@ class DemoCommandTest extends TestCase
         $this->artisan('taqwim:demo')->assertFailed();
         $this->assertEquals(1, User::where('email', 'owner@asnan.test')->count());
         $this->assertEquals($patients, \App\Models\Patient::where('clinic_id', $clinic->id)->count());
-        putenv('DEMO_PASSWORD');
     }
 }

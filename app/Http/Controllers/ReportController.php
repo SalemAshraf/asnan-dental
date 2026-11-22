@@ -58,11 +58,15 @@ class ReportController extends Controller
 
         $filename = 'taqwim-report-'.$d['range']['from'].'-to-'.$d['range']['to'].'.csv';
 
-        return response()->streamDownload(function () use ($rows) {
+        // Spreadsheet formula injection: a text cell starting with =, +, -, @ (or a tab/CR)
+        // executes as a formula in Excel. Prefix such cells with a single quote.
+        $safe = fn ($v) => is_string($v) && preg_match('/^[=+\-@\t\r]/', $v) ? "'".$v : $v;
+
+        return response()->streamDownload(function () use ($rows, $safe) {
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF"); // UTF-8 BOM so Excel reads Arabic correctly
             foreach ($rows as $row) {
-                fputcsv($out, $row);
+                fputcsv($out, array_map($safe, $row));
             }
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);

@@ -36,4 +36,4 @@ FDI chart (permanent+primary, per-surface), treatment plans with acceptance trac
 - Gulf demand evidence is thinner than Egypt (fewer fetched vendors).
 - Whether small Egyptian clinics fall under ETA e-invoicing today: unverified.
 - KSA hosting-mandate contradiction unresolved (sources #18 vs #19 in sources.md).
-- No buyer interviews yet; demand is inferred from vendor density, not from Salem's network.
+- No buyer interviews yet; demand is inferred from vendor density, not from buyer interviews.

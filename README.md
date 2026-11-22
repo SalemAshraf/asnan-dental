@@ -73,7 +73,7 @@ It is an OAuth 2.1 + PKCE authorization server plus an MCP endpoint with five re
 - **Scoped to one clinic.** A token only ever sees its own clinic, and eligibility is re-checked on every call.
 - **Your Claude account.** Data goes to your own Claude account under your terms with Anthropic. A separate Claude plan is required, and there is no AI assistant inside Taqwim itself.
 
-The connector is new and has been tried on a small number of accounts so far.
+The connector is new and has not been tried with a real Claude account yet.
 
 ## The stack
 

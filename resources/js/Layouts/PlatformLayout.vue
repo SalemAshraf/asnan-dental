@@ -16,11 +16,11 @@ const isCurrent = (l) => (l.exact ? window.location.pathname === l.href : window
     <div class="min-h-screen bg-canvas text-ink-900" dir="rtl">
         <header class="border-b border-slate-200 bg-white">
             <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-3">
-                <span class="flex items-center gap-2 font-bold">
+                <span class="flex shrink-0 items-center gap-2 font-bold">
                     <img src="/brand/taqwim-lockup-light.svg" alt="تقويم" class="h-8 w-auto">
-                    <span class="text-slate-500">لوحة المنصة</span>
+                    <span class="hidden text-slate-500 sm:inline">لوحة المنصة</span>
                 </span>
-                <nav class="flex items-center gap-1 text-sm">
+                <nav class="flex items-center gap-1 overflow-x-auto text-sm [&>*]:shrink-0">
                     <Link v-for="l in links" :key="l.href" :href="l.href" class="rounded-lg px-3 py-1.5 font-medium" :class="isCurrent(l) ? 'bg-brand-50 text-brand-800' : 'text-slate-600 hover:bg-slate-100'">{{ l.label }}</Link>
                     <button class="rounded-lg px-3 py-1.5 text-slate-500 hover:bg-slate-100" @click="logout.post('/platform/logout')">خروج</button>
                 </nav>

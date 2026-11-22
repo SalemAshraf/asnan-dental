@@ -15,16 +15,21 @@ class PublicBookingController extends Controller
         return Clinic::where('booking_token', $token)->where('booking_enabled', true)->firstOrFail();
     }
 
-    public function form(string $token)
+    public function form(Request $request, string $token)
     {
         $clinic = $this->clinicFromToken($token);
 
-        return Inertia::render('Booking', [
+        // Per-clinic booking pages are reached by link, not search engines.
+        $page = Inertia::render('Booking', [
             'clinicName' => $clinic->name,
             'token' => $token,
             'services' => $clinic->services()->where('is_active', true)->orderBy('name_ar')->get(['id', 'name_ar', 'name_en', 'duration_min', 'default_price_minor']),
             'currency' => $clinic->currency,
         ]);
+        $response = $page->toResponse($request);
+        $response->headers->set('X-Robots-Tag', 'noindex');
+
+        return $response;
     }
 
     public function submit(Request $r, string $token)

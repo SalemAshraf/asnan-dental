@@ -21,6 +21,19 @@ Route::get('/', fn () => auth()->check()
     : Inertia::render('Welcome', ['canLogin' => Route::has('login'), 'canRegister' => Route::has('register')]))->name('welcome');
 
 Route::get('/pricing', [\App\Http\Controllers\PricingController::class, 'show'])->name('pricing');
+Route::get('/sitemap.xml', function () {
+    $base = rtrim(config('app.url'), '/');
+    $paths = ['/', '/pricing', '/register', '/login'];
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n"
+        .'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    foreach ($paths as $p) {
+        $xml .= '<url><loc>'.htmlspecialchars($base.$p, ENT_XML1).'</loc></url>';
+    }
+    $xml .= '</urlset>';
+
+    return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
+})->name('sitemap');
+
 Route::get('/b/{token}', [\App\Http\Controllers\PublicBookingController::class, 'form'])->name('booking.form');
 Route::post('/b/{token}', [\App\Http\Controllers\PublicBookingController::class, 'submit'])->middleware('throttle:10,1')->name('booking.submit');
 Route::post('/pricing/inquiry', [\App\Http\Controllers\PricingController::class, 'inquiry'])->middleware('throttle:6,1')->name('pricing.inquiry');

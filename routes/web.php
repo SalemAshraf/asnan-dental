@@ -94,6 +94,11 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::post('expenses', [\App\Http\Controllers\ExpenseController::class, 'store'])->name('expenses.store');
     Route::delete('expenses/{expense}', [\App\Http\Controllers\ExpenseController::class, 'destroy'])->name('expenses.destroy');
     Route::patch('team/{user}/commission', [\App\Http\Controllers\CommissionController::class, 'update'])->name('team.commission');
+    Route::get('lab-cases', [\App\Http\Controllers\LabCaseController::class, 'index'])->name('lab.index');
+    Route::post('lab-cases', [\App\Http\Controllers\LabCaseController::class, 'store'])->name('lab.store');
+    Route::put('lab-cases/{labCase}', [\App\Http\Controllers\LabCaseController::class, 'update'])->name('lab.update');
+    Route::post('lab-cases/{labCase}/transition', [\App\Http\Controllers\LabCaseController::class, 'transition'])->name('lab.transition');
+    Route::delete('lab-cases/{labCase}', [\App\Http\Controllers\LabCaseController::class, 'destroy'])->name('lab.destroy');
 
     Route::get('reports', \App\Http\Controllers\ReportController::class)->name('reports');
     Route::get('reports/export', [\App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');

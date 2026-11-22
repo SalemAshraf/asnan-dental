@@ -30,6 +30,7 @@ const groups = computed(() => {
             { href: '/appointments', label: t('nav.appointments'), icon: 'appointments' },
             { href: '/recalls', label: t('nav.recalls'), icon: 'clock' },
             { href: '/services', label: t('nav.services'), icon: 'services' },
+            { href: '/lab-cases', label: t('nav.lab'), icon: 'services' },
         ] },
         { label: t('nav.groups.finance'), items: [
             { href: '/invoices', label: t('nav.invoices'), icon: 'invoices' },

@@ -24,8 +24,8 @@ const pts = computed(() => {
         </div>
         <p class="mt-1 whitespace-nowrap text-xl font-bold tracking-tight text-ink-900 sm:text-2xl"
             :class="{ '!text-rose-600': tone === 'bad', '!text-brand-700': tone === 'good' }">{{ value }}</p>
-        <div class="mt-2 flex items-end justify-between gap-3">
-            <p v-if="hint" class="min-w-0 text-xs text-slate-400">{{ hint }}</p>
+        <div class="mt-2 flex flex-wrap items-end justify-between gap-3">
+            <p v-if="hint" class="min-w-24 flex-1 text-xs text-slate-400">{{ hint }}</p>
             <svg v-if="pts" viewBox="0 0 100 30" preserveAspectRatio="none" class="h-7 w-20 shrink-0" dir="ltr" aria-hidden="true">
                 <polyline :points="pts" fill="none" stroke="#177A75" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
             </svg>

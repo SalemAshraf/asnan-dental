@@ -12,14 +12,14 @@ const h = (v) => Math.max(v ? 4 : 0, (v / max.value) * 120);
 </script>
 
 <template>
-    <div>
-        <div class="flex items-end justify-between gap-2" style="height: 150px" dir="ltr">
-            <div v-for="r in rows" :key="r.label" class="flex flex-1 flex-col items-center justify-end gap-1">
+    <div class="relative overflow-x-auto">
+        <div class="flex items-end justify-between gap-2" :style="{ height: '150px', minWidth: rows.length * 40 + 'px' }" dir="ltr">
+            <div v-for="r in rows" :key="r.label" class="flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
                 <div class="flex w-full items-end justify-center gap-1" style="height: 130px">
                     <div class="w-1/3 rounded-t bg-brand-200" :style="{ height: h(r.b) + 'px' }" :title="labelB + ': ' + format(r.b)"><span class="sr-only">{{ r.b }}</span></div>
                     <div class="w-1/3 rounded-t bg-brand-700" :style="{ height: h(r.a) + 'px' }" :title="labelA + ': ' + format(r.a)"><span class="sr-only">{{ r.a }}</span></div>
                 </div>
-                <span class="text-[11px] text-slate-500">{{ r.label }}</span>
+                <span class="whitespace-nowrap text-[11px] text-slate-500">{{ r.label }}</span>
             </div>
         </div>
         <div class="mt-3 flex gap-4 text-xs text-slate-500">

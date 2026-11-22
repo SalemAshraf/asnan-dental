@@ -46,7 +46,7 @@ const methodMax = Math.max(1, ...Object.values(props.byMethod));
             <Kpi :label="t('rep.kpi.newPatients')" :value="cards.new_patients" icon="patients" />
         </div>
 
-        <div class="grid gap-4 lg:grid-cols-2">
+        <div class="grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
             <div class="card lg:col-span-2">
                 <h2 class="mb-4 font-bold text-ink-900">{{ t('rep.chart.title') }}</h2>
                 <EmptyState v-if="!cards.collected_minor" icon="reports" :title="t('rep.chart.empty')" />
@@ -80,7 +80,7 @@ const methodMax = Math.max(1, ...Object.values(props.byMethod));
             <div class="card">
                 <h2 class="mb-3 font-bold text-ink-900">{{ t('rep.dentists') }}</h2>
                 <EmptyState v-if="!perDentist.length" icon="patients" :title="t('rep.dentists.empty')" />
-                <table v-else class="w-full text-sm">
+                <div v-else class="overflow-x-auto"><table class="w-full text-sm">
                     <thead class="border-b border-slate-200">
                         <tr><th class="th !px-0">{{ t('rep.col.dentist') }}</th><th class="th">{{ t('rep.col.appts') }}</th><th class="th">{{ t('rep.col.completed') }}</th><th class="th">{{ t('rep.col.noShow') }}</th><th class="th !px-0">{{ t('rep.col.cancelled') }}</th></tr>
                     </thead>
@@ -93,13 +93,13 @@ const methodMax = Math.max(1, ...Object.values(props.byMethod));
                             <td class="td !px-0 tabular-nums text-slate-500">{{ d.cancelled }}</td>
                         </tr>
                     </tbody>
-                </table>
+                </table></div>
             </div>
 
             <div class="card">
                 <h2 class="mb-3 font-bold text-ink-900">{{ t('rep.topServices') }}</h2>
                 <EmptyState v-if="!topServices.length" icon="services" :title="t('rep.topServices.empty')" />
-                <table v-else class="w-full text-sm">
+                <div v-else class="overflow-x-auto"><table class="w-full text-sm">
                     <thead class="border-b border-slate-200">
                         <tr><th class="th !px-0">{{ t('rep.col.service') }}</th><th class="th">{{ t('rep.col.count') }}</th><th class="th !px-0 text-end">{{ t('rep.col.value') }}</th></tr>
                     </thead>
@@ -110,7 +110,7 @@ const methodMax = Math.max(1, ...Object.values(props.byMethod));
                             <td class="td !px-0 text-end tabular-nums font-semibold">{{ money(s.total_minor) }}</td>
                         </tr>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
     </AppLayout>

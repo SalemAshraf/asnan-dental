@@ -79,7 +79,7 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
             <h2 class="mb-3 font-bold text-rose-700">{{ t('rec.overdue', { n: overdue.length }) }}</h2>
             <div class="divide-y divide-slate-100">
                 <div v-for="r in overdue" :key="r.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">
-                    <span class="min-w-0 flex-1">
+                    <span class="min-w-40 flex-1">
                         <span class="block truncate font-semibold text-ink-900">{{ r.patient?.full_name }} <span class="font-normal text-slate-400">#{{ r.patient?.file_no }}</span></span>
                         <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || t('rec.defaultReason') }} · {{ t('rec.wasDue') }} <span class="tabular-nums" dir="ltr">{{ dstr(r.due_date) }}</span></span>
                     </span>
@@ -96,7 +96,7 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
             <div v-else class="divide-y divide-slate-100">
                 <div v-for="r in upcoming" :key="r.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">
                     <span class="grid w-24 shrink-0 place-items-center rounded-lg bg-brand-50 py-1.5 text-xs font-bold tabular-nums text-brand-800" dir="ltr">{{ dstr(r.due_date) }}</span>
-                    <span class="min-w-0 flex-1">
+                    <span class="min-w-40 flex-1">
                         <span class="block truncate font-semibold text-ink-900">{{ r.patient?.full_name }}</span>
                         <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || t('rec.defaultReason') }}</span>
                     </span>

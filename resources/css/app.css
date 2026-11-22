@@ -23,6 +23,8 @@
 @layer base {
     html { font-family: var(--font-sans); line-height: 1.65; }
     body { font-feature-settings: 'tnum' 1; }
+    /* Never let a nested RTL scroller (e.g. dense charts) push the page sideways */
+    html, body { overflow-x: clip; }
     h1 { letter-spacing: -0.01em; }
     ::selection { background: var(--color-brand-200); }
 }

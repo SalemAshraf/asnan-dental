@@ -58,7 +58,7 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
 <template>
     <div class="min-h-screen bg-canvas text-ink-800 lg:flex">
         <aside class="fixed inset-y-0 z-30 flex w-72 flex-col border-e border-slate-200 bg-white shadow-xl transition-[transform,width] duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:shadow-none"
-            :class="[open ? 'translate-x-0' : 'rtl:translate-x-full rtl:lg:translate-x-0', collapsed ? 'lg:w-[76px]' : 'lg:w-64']" style="inset-inline-start: 0">
+            :class="[open ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full lg:translate-x-0 rtl:lg:translate-x-0', collapsed ? 'lg:w-[76px]' : 'lg:w-64']" style="inset-inline-start: 0">
             <div class="flex h-16 shrink-0 items-center justify-between gap-2 px-4" :class="collapsed ? 'lg:justify-center lg:px-0' : ''">
                 <Link href="/dashboard" class="flex min-w-0 items-center gap-3 text-lg font-bold text-ink-900" title="تقويم">
                     <img src="/brand/taqwim-lockup-light.svg" alt="تقويم" class="h-9 w-auto" :class="collapsed ? 'lg:hidden' : ''">

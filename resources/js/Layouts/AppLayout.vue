@@ -2,6 +2,7 @@
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import Icon from '@/Components/Icon.vue';
+import { i18n, t, toggleLocale } from '@/i18n';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
@@ -15,22 +16,22 @@ const toggleNav = () => { collapsed.value = !collapsed.value; localStorage.setIt
 
 const groups = computed(() => {
     const g = [
-        { label: 'العيادة', items: [
-            { href: '/', label: 'الرئيسية', icon: 'dashboard', exact: true },
-            { href: '/patients', label: 'المرضى', icon: 'patients' },
-            { href: '/appointments', label: 'المواعيد', icon: 'appointments' },
-            { href: '/recalls', label: 'المتابعات', icon: 'clock' },
-            { href: '/services', label: 'الخدمات والأسعار', icon: 'services' },
+        { label: t('nav.groups.clinic'), items: [
+            { href: '/', label: t('nav.dashboard'), icon: 'dashboard', exact: true },
+            { href: '/patients', label: t('nav.patients'), icon: 'patients' },
+            { href: '/appointments', label: t('nav.appointments'), icon: 'appointments' },
+            { href: '/recalls', label: t('nav.recalls'), icon: 'clock' },
+            { href: '/services', label: t('nav.services'), icon: 'services' },
         ] },
-        { label: 'المالية', items: [
-            { href: '/invoices', label: 'الفواتير', icon: 'invoices' },
+        { label: t('nav.groups.finance'), items: [
+            { href: '/invoices', label: t('nav.invoices'), icon: 'invoices' },
         ] },
     ];
     if (user.value?.role === 'owner') {
-        g.push({ label: 'الإدارة', items: [
-            { href: '/reports', label: 'التقارير', icon: 'reports' },
-            { href: '/settings', label: 'الإعدادات', icon: 'settings' },
-            { href: '/audit-log', label: 'سجل التدقيق', icon: 'audit' },
+        g.push({ label: t('nav.groups.admin'), items: [
+            { href: '/reports', label: t('nav.reports'), icon: 'reports' },
+            { href: '/settings', label: t('nav.settings'), icon: 'settings' },
+            { href: '/audit-log', label: t('nav.audit'), icon: 'audit' },
         ] });
     }
     return g;
@@ -57,7 +58,7 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
                     </span>
                     <span class="truncate" :class="collapsed ? 'lg:hidden' : ''">بسمة</span>
                 </Link>
-                <button class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden" aria-label="إغلاق القائمة" @click="open = false"><Icon name="close" :size="20" /></button>
+                <button class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden" :aria-label="t('nav.close')" @click="open = false"><Icon name="close" :size="20" /></button>
             </div>
             <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-4" :class="collapsed ? 'lg:px-2' : ''">
                 <div v-for="(g, gi) in groups" :key="g.label" :class="gi && collapsed ? 'lg:mt-2 lg:border-t lg:border-slate-100 lg:pt-2' : ''">
@@ -69,8 +70,8 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
                     </Link>
                 </div>
             </nav>
-            <button class="mx-3 mb-1 hidden items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-ink-900 lg:flex" :class="collapsed ? 'lg:justify-center lg:px-0' : ''" :aria-expanded="!collapsed" aria-label="طي القائمة" @click="toggleNav">
-                <Icon name="menu" :size="20" /><span :class="collapsed ? 'lg:hidden' : ''">طي القائمة</span>
+            <button class="mx-3 mb-1 hidden items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-ink-900 lg:flex" :class="collapsed ? 'lg:justify-center lg:px-0' : ''" :aria-expanded="!collapsed" :aria-label="t('nav.collapse')" @click="toggleNav">
+                <Icon name="menu" :size="20" /><span :class="collapsed ? 'lg:hidden' : ''">{{ t('nav.collapse') }}</span>
             </button>
             <div class="m-3 flex items-center gap-3 rounded-xl bg-slate-50 p-3" :class="collapsed ? 'lg:m-2 lg:justify-center lg:p-2' : ''">
                 <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink-900 text-sm font-bold text-brand-300">{{ initials }}</span>
@@ -78,24 +79,25 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
                     <span class="block truncate text-sm font-semibold text-ink-900">{{ user?.name }}</span>
                     <span class="block text-xs text-slate-500">{{ roleAr[user?.role] ?? user?.role }}</span>
                 </span>
-                <button @click="logout" class="rounded-lg p-1.5 text-slate-400 hover:bg-white hover:text-rose-600" :class="collapsed ? 'lg:hidden' : ''" title="تسجيل الخروج" aria-label="تسجيل الخروج"><Icon name="logout" :size="18" class="rtl:-scale-x-100" /></button>
+                <button @click="logout" class="rounded-lg p-1.5 text-slate-400 hover:bg-white hover:text-rose-600" :class="collapsed ? 'lg:hidden' : ''" :title="t('nav.logout')" :aria-label="t('nav.logout')"><Icon name="logout" :size="18" class="rtl:-scale-x-100" /></button>
             </div>
         </aside>
         <div v-if="open" class="fixed inset-0 z-20 bg-ink-900/40 backdrop-blur-[1px] lg:hidden" @click="open = false" />
         <div class="flex min-w-0 flex-1 flex-col">
             <header class="sticky top-0 z-10 flex h-16 items-center justify-between gap-3 border-b border-slate-200 bg-canvas/90 px-4 backdrop-blur lg:px-8">
                 <div class="flex min-w-0 flex-1 items-center gap-3">
-                    <button class="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-100 lg:hidden" aria-label="القائمة" @click="open = !open"><Icon name="menu" :size="20" /></button>
+                    <button class="rounded-lg border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-100 lg:hidden" :aria-label="t('nav.menu')" @click="open = !open"><Icon name="menu" :size="20" /></button>
                     <p class="hidden truncate text-sm font-semibold text-ink-800 md:block">{{ clinic?.name }}</p>
                     <form class="hidden max-w-md flex-1 md:block" @submit.prevent="goSearch">
                         <div class="relative">
                             <Icon name="search" :size="16" class="pointer-events-none absolute inset-y-0 start-3 my-auto text-slate-400" />
-                            <input v-model="q" type="search" class="input !rounded-xl !ps-9" placeholder="بحث سريع عن مريض بالاسم أو الهاتف…" aria-label="بحث عن مريض" />
+                            <input v-model="q" type="search" class="input !rounded-xl !ps-9" :placeholder="t('nav.search')" :aria-label="t('nav.search')" />
                         </div>
                     </form>
                 </div>
                 <div class="flex items-center gap-2">
-                    <Link href="/appointments" class="btn-secondary btn-sm !py-2"><Icon name="appointments" :size="15" /><span class="hidden sm:inline">المواعيد</span></Link>
+                    <Link href="/appointments" class="btn-secondary btn-sm !py-2"><Icon name="appointments" :size="15" /><span class="hidden sm:inline">{{ t('nav.appointments') }}</span></Link>
+                    <button @click="toggleLocale" class="btn-secondary btn-sm !py-2 !px-2.5 font-bold" :title="i18n.locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'" :aria-label="i18n.locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'">{{ i18n.locale === 'ar' ? 'EN' : 'ع' }}</button>
                     <Link href="/patients/create" class="btn-primary btn-sm !py-2"><Icon name="plus" :size="15" /><span class="hidden sm:inline">مريض جديد</span></Link>
                 </div>
             </header>

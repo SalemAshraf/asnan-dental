@@ -26,6 +26,11 @@ class AppointmentController extends Controller
             'day' => $day->toDateString(),
             'branches' => Branch::where('is_active', true)->get(['id', 'name']),
             'dentists' => User::where('is_active', true)->whereIn('role', ['owner', 'dentist'])->get(['id', 'name']),
+            'bookingRequests' => \App\Models\BookingRequest::with('service:id,name_ar,name_en')
+                ->where('status', \App\Models\BookingRequest::STATUS_NEW)
+                ->orderBy('created_at')
+                ->get(['id', 'service_id', 'name', 'phone', 'preferred_date', 'preferred_time', 'notes', 'created_at'])
+                ->map(fn ($r) => tap($r, fn ($r) => $r->preferred_date = $r->preferred_date?->toDateString())),
         ];
 
         if ($view === 'week') {

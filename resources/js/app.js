@@ -9,7 +9,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
 createInertiaApp({
-    title: (title) => title ? `${title} — بسمة` : 'بسمة — إدارة عيادات الأسنان',
+    title: (title) => title ? `${title} — تقويم` : 'تقويم — إدارة عيادات الأسنان',
     resolve: (name) =>
         resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {

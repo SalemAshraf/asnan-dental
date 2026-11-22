@@ -4,7 +4,7 @@ import Badge from '@/Components/Badge.vue';
 import { useForm } from '@inertiajs/vue3';
 import { t } from '@/i18n';
 
-const props = defineProps({ clinic: Object, branches: Array, users: Array, roles: Array, setupDismissed: Boolean });
+const props = defineProps({ clinic: Object, branches: Array, users: Array, roles: Array, setupDismissed: Boolean, bookingEnabled: Boolean, bookingUrl: String });
 const guideForm = useForm({});
 const showGuide = () => guideForm.post('/setup-guide/show', { preserveScroll: true });
 
@@ -13,6 +13,7 @@ const clinicForm = useForm({
     name: props.clinic.name, phone: props.clinic.phone ?? '', address: props.clinic.address ?? '',
     tax_rate_bp: props.clinic.tax_rate_bp, invoice_prefix: props.clinic.invoice_prefix,
     timezone: props.clinic.timezone ?? 'Africa/Cairo', currency: props.clinic.currency ?? 'EGP',
+    booking_enabled: props.bookingEnabled ?? false,
 });
 const branchForm = useForm({ name: '', address: '', phone: '' });
 const userForm = useForm({ name: '', email: '', phone: '', role: 'dentist', branch_id: '', password: '' });
@@ -46,6 +47,18 @@ const toggle = (id) => useForm({}).post(`/settings/users/${id}/toggle`, { preser
                 <input v-model="clinicForm.currency" class="input" dir="ltr" maxlength="3"></div>
             <div class="self-end"><button class="btn-primary">{{ t('set.save') }}</button></div>
         </form>
+
+        <div class="card mb-4">
+            <h2 class="mb-1 font-bold text-ink-900">{{ t('set.booking') }}</h2>
+            <p class="mb-3 text-xs text-slate-500">{{ t('set.bookingHint') }}</p>
+            <label class="flex items-center gap-2 text-sm">
+                <input v-model="clinicForm.booking_enabled" type="checkbox" @change="clinicForm.put('/settings/clinic', { preserveScroll: true })">
+                {{ t('set.bookingToggle') }}
+            </label>
+            <div v-if="clinicForm.booking_enabled && bookingUrl" class="mt-3 flex flex-wrap items-center gap-2 rounded-lg bg-slate-50 p-3 text-sm">
+                <a :href="bookingUrl" target="_blank" rel="noopener" class="break-all font-medium text-brand-700 hover:underline" dir="ltr">{{ bookingUrl }}</a>
+            </div>
+        </div>
 
         <div class="card mb-4">
             <h2 class="mb-3 font-bold text-ink-900">{{ t('set.branches') }}</h2>

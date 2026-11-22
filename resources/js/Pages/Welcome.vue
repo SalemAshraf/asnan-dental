@@ -30,7 +30,7 @@ const C = {
         nH: 'مش موجود لسه', nP: 'علشان الصورة تبقى واضحة: الإرسال التلقائي لرسائل واتساب، الرسائل النصية والإيميلات، الدفع أونلاين، مطالبات التأمين، والتطبيق الأصلي للموبايل لسه ما اتبنوش. زر واتساب بيفتح محادثة جاهزة على جهازك ولا يرسل بنفسه.',
         qH: 'أسئلة شائعة',
         faq: [['هل بيانات عيادتي بتظهر لعيادات تانية؟', 'لا. كل حساب عيادة له بياناته المنفصلة. التسجيل بينشئ عيادة جديدة فقط، ولا يضيفك لعيادة موجودة. الانضمام يتم بإضافة من مالك العيادة.'], ['هل النظام بيبعت رسائل واتساب للمرضى؟', 'لا حاليًا. زر واتساب بيفتح محادثة في واتساب على جهازك برسالة جاهزة تبعتها أنت، من غير أي تفاصيل سريرية. الإرسال التلقائي مش متاح لسه.'], ['هل في تطبيق موبايل؟', 'النظام بيشتغل كامل من متصفح الموبايل. التطبيق الأصلي لأندرويد وiOS مش موجود لسه.'], ['كام السعر؟', 'السعر والباقات لسه ما اتحددوش، فمفيش أرقام هنا.'], ['هل إنشاء الحساب مجاني؟', 'أيوه. أنشئ حسابك من غير أي وسيلة دفع، وفريقنا بيفعّل الحساب يدويًا بعد التواصل. حتى التفعيل، الحساب للاطلاع فقط: بياناتك محفوظة وتقدر تشوفها، لكن لا يمكن إضافة أو تعديل أي شيء.'], ['أقدر أجرّب قبل ما أدخل بياناتي؟', 'تقدر تنشئ حساب عيادة جديد وتجرّب. بياناتك التجريبية بتفضل منفصلة عن أي عيادة تانية.']],
-        fin: 'جاهز تبدأ؟', finP: 'أنشئ حساب عيادتك وابدأ بإضافة الفريق والمرضى.', foot: 'بسمة', login: 'تسجيل الدخول', register: 'إنشاء حساب', plans: 'الباقات',
+        fin: 'جاهز تبدأ؟', finP: 'أنشئ حساب عيادتك وابدأ بإضافة الفريق والمرضى.', foot: 'تقويم', login: 'تسجيل الدخول', register: 'إنشاء حساب', plans: 'الباقات',
     },
     en: {
         nav: [['#product', 'Product'], ['#flow', 'How it works'], ['#team', 'Team'], ['#faq', 'FAQ']],
@@ -56,7 +56,7 @@ const C = {
         nH: 'Not available yet', nP: 'To be clear: automatic WhatsApp sending, SMS and email, online payment, insurance claims and a native mobile app are not built yet. The WhatsApp button opens a ready chat on your device; it does not send by itself.',
         qH: 'Frequently asked questions',
         faq: [['Can other clinics see my data?', 'No. Each clinic account has its own separate data. Signing up only creates a new clinic; it never adds you to an existing one. Joining happens when the clinic owner adds you.'], ['Does it send WhatsApp messages to patients?', 'Not today. The WhatsApp button opens a chat on your device with a ready message you send yourself, with no clinical details. Automatic sending is not available yet.'], ['Is there a mobile app?', 'The system works fully from a phone browser. A native Android or iOS app does not exist yet.'], ['How much does it cost?', 'Pricing and plans are not set yet, so there are no numbers here.'], ['Is creating an account free?', 'Yes. Create your account with no payment method, and our team activates it manually after getting in touch. Until activation the account is read-only: your data stays saved and visible, but nothing can be added or changed.'], ['Can I try it before entering my data?', 'You can create a new clinic account and try it. Your trial data stays separate from every other clinic.']],
-        fin: 'Ready to start?', finP: 'Create your clinic account and start by adding your team and patients.', foot: 'Basma', login: 'Log in', register: 'Create account', plans: 'Plans',
+        fin: 'Ready to start?', finP: 'Create your clinic account and start by adding your team and patients.', foot: 'Taqwim', login: 'Log in', register: 'Create account', plans: 'Plans',
     },
 };
 const c = computed(() => C[i18n.locale] || C.ar);
@@ -66,7 +66,7 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
 </script>
 
 <template>
-    <Head title="بسمة — إدارة عيادات الأسنان" />
+    <Head title="تقويم — إدارة عيادات الأسنان" />
     <div class="min-h-screen bg-canvas text-ink-900">
         <header class="sticky top-0 z-30 border-b border-slate-200/70 bg-canvas/90 backdrop-blur">
             <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">

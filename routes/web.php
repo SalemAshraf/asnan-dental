@@ -20,6 +20,8 @@ Route::get('/', fn () => auth()->check()
     : Inertia::render('Welcome', ['canLogin' => Route::has('login'), 'canRegister' => Route::has('register')]))->name('welcome');
 
 Route::get('/pricing', [\App\Http\Controllers\PricingController::class, 'show'])->name('pricing');
+Route::get('/b/{token}', [\App\Http\Controllers\PublicBookingController::class, 'form'])->name('booking.form');
+Route::post('/b/{token}', [\App\Http\Controllers\PublicBookingController::class, 'submit'])->middleware('throttle:10,1')->name('booking.submit');
 Route::post('/pricing/inquiry', [\App\Http\Controllers\PricingController::class, 'inquiry'])->middleware('throttle:6,1')->name('pricing.inquiry');
 
 Route::middleware('guest')->group(function () {
@@ -85,6 +87,8 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
 
     Route::post('setup-guide/dismiss', [\App\Http\Controllers\SetupGuideController::class, 'dismiss'])->middleware('role:owner')->name('setup.dismiss');
     Route::post('setup-guide/show', [\App\Http\Controllers\SetupGuideController::class, 'show'])->middleware('role:owner')->name('setup.show');
+    Route::post('booking-requests/{bookingRequest}/accept', [\App\Http\Controllers\BookingRequestController::class, 'accept'])->name('booking.accept');
+    Route::post('booking-requests/{bookingRequest}/decline', [\App\Http\Controllers\BookingRequestController::class, 'decline'])->name('booking.decline');
     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::put('settings/clinic', [SettingsController::class, 'updateClinic'])->name('settings.clinic.update');
     Route::post('settings/branches', [SettingsController::class, 'storeBranch'])->name('settings.branches.store');

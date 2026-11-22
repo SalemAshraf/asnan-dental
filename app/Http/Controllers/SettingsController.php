@@ -21,6 +21,8 @@ class SettingsController extends Controller
             'users' => User::orderBy('id')->get(['id', 'name', 'email', 'phone', 'role', 'branch_id', 'is_active']),
             'roles' => User::ROLES,
             'setupDismissed' => $request->user()->clinic?->setup_dismissed_at !== null,
+            'bookingEnabled' => (bool) $request->user()->clinic?->booking_enabled,
+            'bookingUrl' => $request->user()->clinic?->booking_token ? url('/b/'.$request->user()->clinic->booking_token) : null,
         ]);
     }
 
@@ -36,6 +38,7 @@ class SettingsController extends Controller
             'invoice_prefix' => ['required', 'string', 'max:10', 'alpha_dash'],
             'timezone' => ['required', 'string', Rule::in(\DateTimeZone::listIdentifiers())],
             'currency' => ['required', 'string', 'size:3', 'alpha'],
+            'booking_enabled' => ['sometimes', 'boolean'],
         ]);
 
         $data['currency'] = strtoupper($data['currency']);

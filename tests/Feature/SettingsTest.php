@@ -27,6 +27,25 @@ class SettingsTest extends TestCase
         $this->assertSame('SAR', $owner->clinic->currency);
     }
 
+    public function test_booking_toggle_persists(): void
+    {
+        $owner = User::factory()->create();
+
+        $this->actingAs($owner)->put('/settings/clinic', [
+            'name' => 'عيادة التجربة', 'tax_rate_bp' => 0, 'invoice_prefix' => 'INV',
+            'timezone' => 'Africa/Cairo', 'currency' => 'EGP', 'booking_enabled' => true,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertTrue((bool) $owner->clinic->refresh()->booking_enabled);
+
+        $this->actingAs($owner)->put('/settings/clinic', [
+            'name' => 'عيادة التجربة', 'tax_rate_bp' => 0, 'invoice_prefix' => 'INV',
+            'timezone' => 'Africa/Cairo', 'currency' => 'EGP', 'booking_enabled' => false,
+        ])->assertSessionHasNoErrors();
+
+        $this->assertFalse((bool) $owner->clinic->refresh()->booking_enabled);
+    }
+
     public function test_invalid_timezone_rejected(): void
     {
         $owner = User::factory()->create(['role' => User::ROLE_OWNER]);

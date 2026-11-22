@@ -12,10 +12,10 @@ class Clinic extends Model
     use HasFactory;
     protected $fillable = [
         'name', 'country', 'currency', 'timezone', 'tax_rate_bp',
-        'invoice_prefix', 'phone', 'address',
+        'invoice_prefix', 'phone', 'address', 'booking_enabled',
     ];
 
-    protected $casts = ['suspended_at' => 'datetime', 'setup_dismissed_at' => 'datetime'];
+    protected $casts = ['suspended_at' => 'datetime', 'setup_dismissed_at' => 'datetime', 'booking_enabled' => 'boolean'];
 
     public function branches(): HasMany
     {
@@ -27,6 +27,11 @@ class Clinic extends Model
         return $this->hasMany(User::class);
     }
 
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class);
+    }
+
     public function subscription(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Subscription::class);
@@ -36,6 +41,15 @@ class Clinic extends Model
     public function isReadOnly(): bool
     {
         return (bool) $this->subscription?->trialExpired() || $this->subscription?->status === 'pending';
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Clinic $clinic) {
+            if (empty($clinic->booking_token)) {
+                $clinic->booking_token = \Illuminate\Support\Str::random(24);
+            }
+        });
     }
 
     /** Allocate the next invoice number atomically (row lock). */

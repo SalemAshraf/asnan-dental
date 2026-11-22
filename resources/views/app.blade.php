@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0D3F3E">
-    <title inertia>بسمة — إدارة عيادات الأسنان</title>
+    <title inertia>تقويم — إدارة عيادات الأسنان</title>
     @vite(['resources/js/app.js'])
     @inertiaHead
 </head>

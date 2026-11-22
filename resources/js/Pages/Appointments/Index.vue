@@ -7,7 +7,7 @@ import { router, useForm } from '@inertiajs/vue3';
 import { t, fmtDate, fmtTime } from '@/i18n';
 import { ref } from 'vue';
 
-const props = defineProps({ appointments: Array, week: Array, view: String, day: String, branches: Array, dentists: Array });
+const props = defineProps({ appointments: Array, week: Array, view: String, day: String, branches: Array, dentists: Array, bookingRequests: Array });
 const goDay = (d) => router.get('/appointments', { day: d });
 const shift = (days) => {
     const d = new Date(props.day); d.setDate(d.getDate() + days);
@@ -30,10 +30,57 @@ const searchPatients = async () => {
 const time = fmtTime;
 const dayLabel = fmtDate(props.day + 'T00:00:00', { weekday: 'long', day: 'numeric', month: 'long' });
 const setView = (v) => router.get('/appointments', { day: props.day, view: v });
+
+// Public booking requests awaiting the clinic's confirmation.
+const acceptForms = {};
+const accepting = ref(null);
+const acceptForm = (req) => {
+    if (!acceptForms[req.id]) {
+        acceptForms[req.id] = useForm({
+            branch_id: props.branches[0]?.id ?? '', dentist_id: props.dentists[0]?.id ?? '',
+            date: String(req.preferred_date ?? props.day).slice(0, 10), time: '',
+        });
+    }
+    return acceptForms[req.id];
+};
+const acceptReq = (req) => acceptForm(req).post(`/booking-requests/${req.id}/accept`, { preserveScroll: true, onSuccess: () => { accepting.value = null; } });
+const declineForm = useForm({});
+const declineReq = (req) => declineForm.post(`/booking-requests/${req.id}/decline`, { preserveScroll: true });
 </script>
 
 <template>
     <AppLayout>
+        <div v-if="bookingRequests?.length" class="card mb-4 border-amber-200 bg-amber-50/60">
+            <h2 class="mb-3 font-bold text-ink-900">{{ t('appt.bookingRequests') }} <span class="badge bg-amber-100 text-amber-800">{{ bookingRequests.length }}</span></h2>
+            <ul class="space-y-3 text-sm">
+                <li v-for="req in bookingRequests" :key="req.id" class="rounded-xl border border-amber-200 bg-white p-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <p class="font-semibold text-ink-900">{{ req.name }} <span class="font-normal text-slate-500" dir="ltr">{{ req.phone }}</span></p>
+                            <p class="text-xs text-slate-500">
+                                <template v-if="req.service">{{ req.service.name_ar }}<template v-if="req.service.name_en"> / {{ req.service.name_en }}</template> · </template>
+                                <template v-if="req.preferred_date">{{ fmtDate(String(req.preferred_date).slice(0, 10) + 'T00:00:00', { day: 'numeric', month: 'short' }) }}</template>
+                                <template v-if="req.preferred_time"> · {{ req.preferred_time }}</template>
+                                <template v-if="req.notes"> · {{ req.notes }}</template>
+                            </p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button @click="accepting = accepting === req.id ? null : req.id" class="btn-primary btn-sm">{{ t('appt.brAccept') }}</button>
+                            <button @click="declineReq(req)" class="btn-secondary btn-sm text-rose-600">{{ t('appt.brDecline') }}</button>
+                        </div>
+                    </div>
+                    <form v-if="accepting === req.id" @submit.prevent="acceptReq(req)" class="mt-3 grid gap-2 border-t border-slate-100 pt-3 sm:grid-cols-5">
+                        <select v-model="acceptForm(req).branch_id" class="input"><option v-for="b in branches" :key="b.id" :value="b.id">{{ b.name }}</option></select>
+                        <select v-model="acceptForm(req).dentist_id" class="input"><option v-for="d in dentists" :key="d.id" :value="d.id">{{ d.name }}</option></select>
+                        <input v-model="acceptForm(req).date" type="date" dir="ltr" class="input" required>
+                        <input v-model="acceptForm(req).time" type="time" dir="ltr" class="input" required>
+                        <button type="submit" :disabled="acceptForm(req).processing" class="btn-primary">{{ t('appt.brConfirm') }}</button>
+                        <p v-for="(e, k) in acceptForm(req).errors" :key="k" class="col-span-full text-xs text-rose-600">{{ e }}</p>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h1 class="text-2xl font-bold text-ink-900">{{ t('appt.title') }}</h1>

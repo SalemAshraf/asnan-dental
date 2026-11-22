@@ -17,7 +17,7 @@ class Appointment extends Model
 
     protected $fillable = [
         'clinic_id', 'branch_id', 'patient_id', 'dentist_id', 'chair',
-        'starts_at', 'ends_at', 'status', 'reason', 'notes',
+        'starts_at', 'ends_at', 'status', 'reason', 'notes', 'booked_via',
     ];
 
     protected $casts = ['starts_at' => 'datetime', 'ends_at' => 'datetime'];

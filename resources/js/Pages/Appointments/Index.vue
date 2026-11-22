@@ -6,7 +6,7 @@ import Icon from '@/Components/Icon.vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-const props = defineProps({ appointments: Array, day: String, branches: Array, dentists: Array });
+const props = defineProps({ appointments: Array, week: Array, view: String, day: String, branches: Array, dentists: Array });
 const goDay = (d) => router.get('/appointments', { day: d });
 const shift = (days) => {
     const d = new Date(props.day); d.setDate(d.getDate() + days);
@@ -28,6 +28,7 @@ const searchPatients = async () => {
 };
 const time = (d) => new Date(d).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
 const dayLabel = new Date(props.day + 'T00:00:00').toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
+const setView = (v) => router.get('/appointments', { day: props.day, view: v });
 </script>
 
 <template>
@@ -41,6 +42,10 @@ const dayLabel = new Date(props.day + 'T00:00:00').toLocaleDateString('ar-EG', {
                 <button @click="shift(-1)" class="btn-secondary btn-sm"><Icon name="chevron" :size="14" class="rtl:-scale-x-100" /> السابق</button>
                 <input type="date" :value="day" @change="goDay($event.target.value)" class="input !w-auto !py-1.5" aria-label="اختر اليوم">
                 <button @click="shift(1)" class="btn-secondary btn-sm">التالي <Icon name="chevron" :size="14" class="rotate-180 rtl:-scale-x-100" /></button>
+                <span class="flex overflow-hidden rounded-lg border border-slate-300 text-xs font-semibold">
+                    <button @click="setView('day')" class="px-3 py-1.5" :class="view === 'day' ? 'bg-brand-700 text-white' : 'bg-white text-slate-600'">يوم</button>
+                    <button @click="setView('week')" class="px-3 py-1.5" :class="view === 'week' ? 'bg-brand-700 text-white' : 'bg-white text-slate-600'">أسبوع</button>
+                </span>
                 <button @click="showForm = !showForm" class="btn-primary btn-sm !py-2"><Icon name="plus" :size="15" /> حجز موعد</button>
             </div>
         </div>
@@ -74,7 +79,27 @@ const dayLabel = new Date(props.day + 'T00:00:00').toLocaleDateString('ar-EG', {
             <div class="md:col-span-3"><button class="btn-primary">حفظ الحجز</button></div>
         </form>
 
-        <div class="card">
+        <div v-if="view === 'week'" class="card overflow-x-auto !p-3">
+            <div class="grid grid-cols-7 gap-2" style="min-width: 720px">
+                <div v-for="d in week" :key="d.date" class="min-w-24">
+                    <button @click="goDay(d.date)" class="mb-2 w-full rounded-lg px-1 py-1.5 text-center text-xs font-bold transition hover:bg-brand-50"
+                        :class="d.is_today ? 'bg-brand-700 text-white hover:!bg-brand-600' : d.date === day ? 'bg-brand-100 text-brand-800' : 'text-slate-600'">
+                        {{ d.label }}
+                    </button>
+                    <div class="space-y-1.5">
+                        <button v-for="a in d.appointments" :key="a.id" @click="goDay(d.date)"
+                            class="block w-full truncate rounded-lg border px-2 py-1.5 text-start text-[11px] leading-tight transition hover:shadow-sm"
+                            :class="['cancelled','no_show'].includes(a.status) ? 'border-slate-200 bg-slate-50 text-slate-400' : 'border-brand-200 bg-brand-50 text-ink-900'">
+                            <span class="block font-bold tabular-nums" dir="ltr">{{ time(a.starts_at) }}</span>
+                            <span class="block truncate">{{ a.patient?.full_name }}</span>
+                        </button>
+                        <p v-if="!d.appointments.length" class="py-2 text-center text-[11px] text-slate-300">—</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-else class="card overflow-hidden">
             <EmptyState v-if="!appointments.length" icon="appointments" title="لا توجد مواعيد في هذا اليوم" hint="استخدم زر حجز موعد لإضافة أول موعد." />
             <div v-else class="divide-y divide-slate-100">
                 <div v-for="a in appointments" :key="a.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">

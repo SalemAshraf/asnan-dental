@@ -32,6 +32,12 @@ Route::middleware(['auth', 'clinic'])->group(function () {
     Route::post('plans/{plan}/items', [TreatmentPlanController::class, 'storeItem'])->name('plans.items.store');
     Route::patch('plan-items/{item}', [TreatmentPlanController::class, 'updateItem'])->name('plans.items.update');
 
+    Route::get('recalls', [\App\Http\Controllers\RecallController::class, 'index'])->name('recalls.index');
+    Route::post('recalls', [\App\Http\Controllers\RecallController::class, 'store'])->name('recalls.store');
+    Route::post('recalls/{recall}/transition', [\App\Http\Controllers\RecallController::class, 'transition'])->name('recalls.transition');
+
+    Route::get('reports', \App\Http\Controllers\ReportController::class)->name('reports');
+
     Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::post('appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::put('appointments/{appointment}', [AppointmentController::class, 'update'])->name('appointments.update');

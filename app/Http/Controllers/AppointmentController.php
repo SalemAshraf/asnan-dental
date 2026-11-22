@@ -18,21 +18,43 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         $tz = $request->user()->clinic?->timezone ?? config('app.timezone');
-        $day = $request->date('day') ?? now($tz);
-        $start = Carbon::instance($day)->setTimezone($tz)->startOfDay()->utc();
-        $end = Carbon::instance($day)->setTimezone($tz)->endOfDay()->utc();
+        $day = Carbon::instance($request->date('day') ?? now($tz))->setTimezone($tz);
+        $view = $request->string('view')->toString() === 'week' ? 'week' : 'day';
 
-        $appointments = Appointment::with(['patient:id,full_name,phone', 'dentist:id,name', 'branch:id,name'])
-            ->whereBetween('starts_at', [$start, $end])
-            ->orderBy('starts_at')
-            ->get();
-
-        return Inertia::render('Appointments/Index', [
-            'appointments' => $appointments,
-            'day' => Carbon::instance($day)->setTimezone($tz)->toDateString(),
+        $props = [
+            'view' => $view,
+            'day' => $day->toDateString(),
             'branches' => Branch::where('is_active', true)->get(['id', 'name']),
             'dentists' => User::where('is_active', true)->whereIn('role', ['owner', 'dentist'])->get(['id', 'name']),
-        ]);
+        ];
+
+        if ($view === 'week') {
+            // Clinic week starts Saturday (Egypt/Gulf workweek).
+            $weekStart = $day->copy()->startOfWeek(Carbon::SATURDAY);
+            $weekEnd = $weekStart->copy()->addDays(6)->endOfDay();
+            $all = Appointment::with(['patient:id,full_name', 'dentist:id,name'])
+                ->whereBetween('starts_at', [$weekStart->copy()->utc(), $weekEnd->copy()->utc()])
+                ->orderBy('starts_at')
+                ->get(['id', 'patient_id', 'dentist_id', 'starts_at', 'ends_at', 'status', 'chair']);
+
+            $props['week'] = collect(range(0, 6))->map(function ($i) use ($weekStart, $all, $tz) {
+                $date = $weekStart->copy()->addDays($i)->toDateString();
+
+                return [
+                    'date' => $date,
+                    'label' => Carbon::parse($date, $tz)->translatedFormat('l j/n'),
+                    'is_today' => $date === now($tz)->toDateString(),
+                    'appointments' => $all->filter(fn ($a) => $a->starts_at->timezone($tz)->toDateString() === $date)->values(),
+                ];
+            });
+        } else {
+            $props['appointments'] = Appointment::with(['patient:id,full_name,phone', 'dentist:id,name', 'branch:id,name'])
+                ->whereBetween('starts_at', [$day->copy()->startOfDay()->utc(), $day->copy()->endOfDay()->utc()])
+                ->orderBy('starts_at')
+                ->get();
+        }
+
+        return Inertia::render('Appointments/Index', $props);
     }
 
     public function store(Request $request)

@@ -20,6 +20,11 @@ class TreatmentPlanItem extends Model
         return $this->belongsTo(TreatmentPlan::class, 'plan_id');
     }
 
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
+
     public function lineTotal(): int
     {
         return ($this->price_minor - $this->discount_minor) * $this->qty;

@@ -19,6 +19,7 @@ const groups = computed(() => {
             { href: '/', label: 'الرئيسية', icon: 'dashboard', exact: true },
             { href: '/patients', label: 'المرضى', icon: 'patients' },
             { href: '/appointments', label: 'المواعيد', icon: 'appointments' },
+            { href: '/recalls', label: 'المتابعات', icon: 'clock' },
             { href: '/services', label: 'الخدمات والأسعار', icon: 'services' },
         ] },
         { label: 'المالية', items: [
@@ -27,6 +28,7 @@ const groups = computed(() => {
     ];
     if (user.value?.role === 'owner') {
         g.push({ label: 'الإدارة', items: [
+            { href: '/reports', label: 'التقارير', icon: 'reports' },
             { href: '/settings', label: 'الإعدادات', icon: 'settings' },
             { href: '/audit-log', label: 'سجل التدقيق', icon: 'audit' },
         ] });

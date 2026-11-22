@@ -43,12 +43,12 @@ Seeded demo logins (fictional data): `owner@asnan.test`, `dentist@asnan.test`, `
 ## Tests
 
 ```bash
-php artisan test     # 33 feature tests, 107 assertions
+php artisan test     # 40 feature tests, 150 assertions
 ```
 
 Covers: tenant isolation (404s), appointment overlap rules, invoice math/tax/installments/overpayment, plan lifecycle, odontogram upsert + RBAC, privacy (medical alerts stripped server-side, national ID encrypted, JSON search payload shape), audit, soft-delete preserving financial history, clinic-timezone storage.
 
-> Tested against both SQLite (dev default) and MySQL 8.0.46: migrations and the full suite (33 tests / 107 assertions) pass on MySQL 8.
+> Tested against both SQLite (dev default) and MySQL 8.0.46: migrations and the full suite pass on MySQL 8.
 
 ## Security & privacy posture (engineering controls, not legal compliance)
 
@@ -61,9 +61,16 @@ Covers: tenant isolation (404s), appointment overlap rules, invoice math/tax/ins
 
 No compliance certification or legal-compliance claim is made for any jurisdiction. See `docs/product-plan.md` for deferred items and `docs/research/report.md` for source confidence levels.
 
+## UI & workflow upgrade (increment 2)
+
+- Recall/follow-up list (المتابعات): overdue/upcoming/done buckets, one-tap manual WhatsApp reminder links (wa.me, no API integration), done/cancel transitions.
+- Owner-only reports (التقارير): collected vs issued over a selectable range (weekly buckets over long ranges), payment methods, appointment status mix, per-dentist activity, top services in accepted plans.
+- Appointments week view (Saturday-first) alongside the day view.
+- Demo seeder ships representative synthetic activity (12 fictional patients, schedule, plans, invoices/payments across months, recalls) for a realistic first-run experience.
+
 ## Roadmap (deferred to v2, unverified items marked)
 
-- WhatsApp appointment reminders (integration not built).
+- WhatsApp appointment reminders (API integration not built; manual wa.me links exist in المتابعات).
 - Gulf requirements: e-invoicing/fiscal integration (ZATCA), NPHIES, bilingual UI — pending verification against official sources.
 - Online payment collection via Egyptian gateways.
 - Per-clinic timezone settings UI (storage support exists).

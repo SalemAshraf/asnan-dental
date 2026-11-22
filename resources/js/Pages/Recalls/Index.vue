@@ -81,7 +81,7 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
                 <div v-for="r in overdue" :key="r.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">
                     <span class="min-w-40 flex-1">
                         <span class="block truncate font-semibold text-ink-900">{{ r.patient?.full_name }} <span class="font-normal text-slate-400">#{{ r.patient?.file_no }}</span></span>
-                        <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || t('rec.defaultReason') }} · {{ t('rec.wasDue') }} <span class="tabular-nums" dir="ltr">{{ dstr(r.due_date) }}</span></span>
+                        <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || t('rec.defaultReason') }} · {{ t('rec.wasDue') }} <span class="whitespace-nowrap tabular-nums" dir="ltr">{{ dstr(r.due_date) }}</span></span>
                     </span>
                     <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm" :title="t('rec.whatsappTitle')"><Icon name="whatsapp" :size="15" /> {{ t('rec.whatsapp') }}</a>
                     <button @click="setStatus(r.id, 'done')" class="btn-primary btn-sm">{{ t('rec.contacted') }}</button>

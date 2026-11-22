@@ -7,7 +7,7 @@ import { router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { t } from '@/i18n';
 
-const props = defineProps({ pending: Array, recentDone: Array, today: String });
+const props = defineProps({ pending: Array, recentDone: Array, reminders: Array, today: String });
 const page = usePage();
 const clinicName = computed(() => page.props.auth?.clinic?.name ?? 'العيادة');
 
@@ -42,6 +42,18 @@ const searchPatients = async () => {
 const save = () => form.post('/recalls', { onSuccess: () => { showForm.value = false; form.reset(); patientQ.value = ''; } });
 const setStatus = (id, status) => router.post(`/recalls/${id}/transition`, { status }, { preserveScroll: true });
 
+const setReminder = (id, status) => router.patch(`/reminders/${id}`, { status }, { preserveScroll: true });
+const remWaLink = (m) => {
+    const phone = intlPhone(m.patient?.whatsapp || m.patient?.phone);
+    if (!phone) return null;
+    const when = dstr(m.scheduled_for);
+    const time = m.appointment?.starts_at ? String(m.appointment.starts_at).slice(11, 16) : null;
+    const msg = m.kind === 'appointment' && time
+        ? `مرحبًا ${m.patient?.full_name}، معاك ${clinicName.value}. بنذكّر حضرتك بموعدك يوم ${when} الساعة ${time}. لو محتاج تأكيد أو تعديل رد علينا.`
+        : `مرحبًا ${m.patient?.full_name}، معاك ${clinicName.value}. بنذكّر حضرتك بموعد المتابعة يوم ${when}. لو حابب تثبت موعدك أو تغيّره رد علينا.`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+};
+
 
 const overdue = computed(() => props.pending.filter((r) => r.overdue));
 const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
@@ -74,6 +86,26 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
                 <input v-model="form.reason" :placeholder="t('rec.form.reasonPh')" class="input"></div>
             <div class="md:col-span-4"><button class="btn-primary">{{ t('rec.form.save') }}</button></div>
         </form>
+
+        <div class="card mb-4">
+            <h2 class="font-bold text-ink-900">{{ t('rem.title') }} <span class="text-sm font-normal text-slate-400">({{ (reminders ?? []).length }})</span></h2>
+            <p class="mb-3 text-xs text-slate-500">{{ t('rem.subtitle') }}</p>
+            <EmptyState v-if="!(reminders ?? []).length" icon="whatsapp" :title="t('rem.empty')" />
+            <div v-else class="divide-y divide-slate-100">
+                <div v-for="m in reminders" :key="m.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">
+                    <span class="grid w-24 shrink-0 place-items-center rounded-lg py-1.5 text-xs font-bold tabular-nums" :class="m.overdue ? 'bg-rose-50 text-rose-700' : 'bg-brand-50 text-brand-800'" dir="ltr">
+                        {{ dstr(m.scheduled_for) }}<span v-if="m.appointment?.starts_at" class="mt-0.5 block text-[10px] font-semibold">{{ String(m.appointment.starts_at).slice(11, 16) }}</span>
+                    </span>
+                    <span class="min-w-40 flex-1">
+                        <span class="block truncate font-semibold text-ink-900">{{ m.patient?.full_name }} <span class="font-normal text-slate-400">#{{ m.patient?.file_no }}</span></span>
+                        <span class="text-xs text-slate-500">{{ t('rem.kind.' + m.kind) }}<span v-if="m.overdue" class="ms-1 font-semibold text-rose-600">· {{ t('rem.overdue') }}</span></span>
+                    </span>
+                    <a v-if="remWaLink(m)" :href="remWaLink(m)" target="_blank" rel="noopener" class="btn-secondary btn-sm" :title="t('rec.whatsappTitle')"><Icon name="whatsapp" :size="15" /> {{ t('rem.whatsapp') }}</a>
+                    <button @click="setReminder(m.id, 'sent')" class="btn-primary btn-sm">{{ t('rem.markSent') }}</button>
+                    <button @click="setReminder(m.id, 'skipped')" class="btn-secondary btn-sm">{{ t('rem.skip') }}</button>
+                </div>
+            </div>
+        </div>
 
         <div v-if="overdue.length" class="card mb-4 border-rose-200">
             <h2 class="mb-3 font-bold text-rose-700">{{ t('rec.overdue', { n: overdue.length }) }}</h2>

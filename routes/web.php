@@ -86,6 +86,7 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::get('recalls', [\App\Http\Controllers\RecallController::class, 'index'])->name('recalls.index');
     Route::post('recalls', [\App\Http\Controllers\RecallController::class, 'store'])->name('recalls.store');
     Route::post('recalls/{recall}/transition', [\App\Http\Controllers\RecallController::class, 'transition'])->name('recalls.transition');
+    Route::patch('reminders/{reminder}', [\App\Http\Controllers\ReminderMessageController::class, 'update'])->name('reminders.update');
 
     Route::get('reports', \App\Http\Controllers\ReportController::class)->name('reports');
     Route::get('reports/export', [\App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');

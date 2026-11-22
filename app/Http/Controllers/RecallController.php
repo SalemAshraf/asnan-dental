@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recall;
+use App\Models\ReminderMessage;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -25,8 +26,22 @@ class RecallController extends Controller
                 'overdue' => $r->due_date->toDateString() < $today,
             ]);
 
+        $reminders = ReminderMessage::with([
+            'patient:id,full_name,phone,whatsapp,file_no',
+            'appointment:id,starts_at',
+        ])
+            ->where('status', 'queued')
+            ->orderBy('scheduled_for')
+            ->limit(60)
+            ->get()
+            ->map(fn ($m) => [
+                ...$m->toArray(),
+                'overdue' => $m->scheduled_for->toDateString() < $today,
+            ]);
+
         return Inertia::render('Recalls/Index', [
             'pending' => $pending,
+            'reminders' => $reminders,
             'recentDone' => Recall::with(['patient:id,full_name,file_no', 'service:id,name_ar'])
                 ->whereIn('status', ['done', 'cancelled'])
                 ->latest('updated_at')

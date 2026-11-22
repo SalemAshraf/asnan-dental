@@ -12,7 +12,7 @@ Egypt-first, Arabic-first dental clinic OS. Price hypothesis to validate with re
 - FDI odontogram (permanent + primary, per-surface), upsert by tooth/surface, clinical roles only.
 - Treatment plans with enforced lifecycle (draft→proposed→accepted→in_progress→completed/cancelled) and priced items linked to teeth/services.
 - Appointments with dentist/chair overlap protection and status flow.
-- Invoices: created from accepted plan items, server-side totals + configurable VAT (basis points), sequential per-clinic numbering (ZATCA-ready shape), issue/void.
+- Invoices: created from accepted plan items, server-side totals + configurable VAT (basis points), sequential per-clinic numbering, issue/void. (This is plain numbering only — no ZATCA QR, e-invoicing or any fiscal-integration claim; those need their own verified build.)
 - Payments: installments (multiple payments per invoice — core Egypt workflow), methods incl. InstaPay, auto status (partially_paid/paid), overpayment blocked.
 - Audit log: append-only, model events + auth events, sensitive fields excluded.
 - Arabic RTL UI (Vue 3 + Inertia + Tailwind), dashboard with day schedule and revenue stats.
@@ -22,7 +22,7 @@ Egypt-first, Arabic-first dental clinic OS. Price hypothesis to validate with re
 2. Free public online-booking page per clinic.
 3. Lab cases + inventory.
 4. Doctor commissions report.
-5. KSA pack: ZATCA QR on invoices, NPHIES claims mapping, SAR pricing, regional hosting decision (hosting-mandate question unresolved — see research).
+5. KSA pack (each item needs verification against primary specs before any claim): ZATCA QR/e-invoicing, NPHIES claims mapping, SAR pricing, regional hosting decision (hosting-mandate question unresolved — see research).
 6. Excel/CSV patient import with dry run (Basmtak-style onboarding).
 
 ## Explicitly out of scope

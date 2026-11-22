@@ -89,4 +89,25 @@ class PrivacyTest extends TestCase
         $this->actingAs($owner)->delete("/patients/{$patient->id}")->assertRedirect();
         $this->assertSoftDeleted('patients', ['id' => $patient->id]);
     }
+
+    public function test_patient_soft_delete_preserves_clinical_and_financial_history(): void
+    {
+        $owner = \App\Models\User::factory()->create();
+        $branch = \App\Models\Branch::factory()->create(['clinic_id' => $owner->clinic_id]);
+        $patient = \App\Models\Patient::factory()->create(['clinic_id' => $owner->clinic_id, 'branch_id' => $branch->id]);
+        $invoice = \App\Models\Invoice::factory()->create([
+            'clinic_id' => $owner->clinic_id, 'branch_id' => $branch->id, 'patient_id' => $patient->id,
+        ]);
+        \App\Models\ConsentRecord::create([
+            'clinic_id' => $owner->clinic_id, 'patient_id' => $patient->id, 'type' => 'data_processing',
+            'text_snapshot' => 'موافقة', 'method' => 'written', 'given_at' => now(),
+        ]);
+
+        $this->actingAs($owner)->delete("/patients/{$patient->id}")->assertRedirect();
+
+        $this->assertSoftDeleted('patients', ['id' => $patient->id]);
+        $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'patient_id' => $patient->id]);
+        $this->assertDatabaseHas('consent_records', ['patient_id' => $patient->id]);
+        $this->actingAs($owner)->get('/invoices')->assertOk();
+    }
 }

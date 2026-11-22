@@ -35,11 +35,50 @@ class SalesPlatformTest extends TestCase
 
         $clinic = Clinic::where('name', 'Test Dental')->firstOrFail();
         $this->assertDatabaseHas('users', ['clinic_id' => $clinic->id, 'role' => 'owner', 'email' => 'owner@example.com']);
+        // No trial duration is configured by default: the new account awaits manual activation.
+        $sub = Subscription::where('clinic_id', $clinic->id)->firstOrFail();
+        $this->assertSame('pending', $sub->status);
+        $this->assertFalse($sub->trial_enforced);
+        $this->assertNull($sub->trial_ends_at);
+        $this->assertTrue($clinic->fresh()->isReadOnly());
+    }
+
+    public function test_trial_is_granted_only_when_configured(): void
+    {
+        config(['platform.trial_days' => 10]);
+
+        $this->post('/register', [
+            'name' => 'Dr Owner',
+            'clinic_name' => 'Trial Dental',
+            'email' => 'trial@example.com',
+            'password' => 'secret-password-1',
+            'password_confirmation' => 'secret-password-1',
+        ])->assertRedirect('/dashboard');
+
+        $clinic = Clinic::where('name', 'Trial Dental')->firstOrFail();
         $sub = Subscription::where('clinic_id', $clinic->id)->firstOrFail();
         $this->assertSame('trialing', $sub->status);
         $this->assertTrue($sub->trial_enforced);
         $this->assertNotNull($sub->trial_ends_at);
         $this->assertFalse($clinic->fresh()->isReadOnly());
+    }
+
+    public function test_pending_account_can_view_but_not_write(): void
+    {
+        $clinic = Clinic::factory()->create();
+        Subscription::create(['clinic_id' => $clinic->id, 'status' => 'pending']);
+        $user = User::factory()->create(['clinic_id' => $clinic->id]);
+
+        $this->actingAs($user)->get('/dashboard')->assertOk();
+        $this->actingAs($user)->post('/services', [
+            'name_ar' => 'حشو', 'category' => 'restorative', 'price' => 100, 'duration_min' => 30,
+        ])->assertSessionHas('error', 'read_only');
+        $this->assertDatabaseMissing('services', ['clinic_id' => $clinic->id, 'name_ar' => 'حشو']);
+
+        // A read-only clinic can still reach the public inquiry form, and can still log out.
+        $this->get('/pricing')->assertOk();
+        $this->post('/pricing/inquiry', ['name' => 'Dr A', 'phone' => '01000000000'])->assertSessionHas('success');
+        $this->actingAs($user)->post('/logout')->assertRedirect('/login');
     }
 
     public function test_expired_trial_is_read_only_but_can_still_view(): void
@@ -126,6 +165,16 @@ class SalesPlatformTest extends TestCase
         // Tenant users can never reach the panel.
         auth('platform')->logout();
         $this->actingAs($user)->get('/platform')->assertRedirect(route('platform.login'));
+    }
+
+    public function test_platform_admin_is_not_a_tenant_user(): void
+    {
+        PlatformAdmin::create(['name' => 'Staff', 'email' => 'staff2@example.com', 'password' => 'staff-secret-123']);
+        $this->post('/platform/login', ['email' => 'staff2@example.com', 'password' => 'staff-secret-123']);
+
+        // The platform session carries no web guard: tenant areas treat staff as logged out.
+        $this->get('/dashboard')->assertRedirect('/login');
+        $this->get('/patients')->assertRedirect('/login');
     }
 
     public function test_existing_clinic_backfilled_active_never_read_only(): void

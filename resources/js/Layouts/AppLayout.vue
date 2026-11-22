@@ -113,6 +113,10 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
                 <span>{{ t('sub.readOnlyBanner') }}</span>
                 <a v-if="salesWa" :href="`https://wa.me/${salesWa}`" target="_blank" rel="noopener" class="font-bold underline">{{ t('sub.contactSales') }}</a>
             </div>
+            <div v-else-if="sub?.status === 'pending'" class="mx-4 mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900 lg:mx-8">
+                <span>{{ t('sub.pendingBanner') }}</span>
+                <a v-if="salesWa" :href="`https://wa.me/${salesWa}`" target="_blank" rel="noopener" class="font-bold underline">{{ t('sub.contactSales') }}</a>
+            </div>
             <div v-else-if="sub?.status === 'trialing' && sub?.days_left !== null" class="mx-4 mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-900 lg:mx-8">
                 {{ t('sub.trialBanner', { days: sub.days_left }) }}
             </div>

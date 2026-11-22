@@ -19,7 +19,7 @@ class RegisterController extends Controller
     {
         return Inertia::render('Auth/Register', [
             'plan' => Plan::where('is_active', true)->where('is_public', true)->where('slug', (string) request('plan'))->first(['slug', 'name_ar', 'name_en', 'trial_days']),
-            'trialDays' => (int) config('platform.trial_days', 14),
+            'trialDays' => config('platform.trial_days'),
         ]);
     }
 
@@ -33,17 +33,18 @@ class RegisterController extends Controller
             'plan' => 'nullable|string|max:40',
         ]);
 
-        // Every NEW clinic gets a free trial (config platform.trial_days). A plan picked on the pricing page is attached
-        // (its limits apply during the trial); with no pick the trial has no plan and no limits. No payment is taken. When the
-        // trial date passes without a manual activation from the platform, the clinic becomes read-only (see Clinic::isReadOnly).
+        // Trial is a commercial term the owner has not set. A NEW clinic gets a trial only when
+        // PLATFORM_TRIAL_DAYS is configured; otherwise its subscription is pending manual activation
+        // and the account is read-only until the platform activates it. No payment is taken either way.
         $clinic = Clinic::create(['name' => $request->clinic_name]);
         $plan = $request->filled('plan') ? Plan::where('is_active', true)->where('is_public', true)->where('slug', $request->plan)->first() : null;
+        $trialDays = config('platform.trial_days');
         Subscription::create([
             'clinic_id' => $clinic->id,
             'plan_id' => $plan?->id,
-            'status' => 'trialing',
-            'trial_enforced' => true,
-            'trial_ends_at' => now()->addDays((int) config('platform.trial_days', 14)),
+            'status' => $trialDays ? 'trialing' : 'pending',
+            'trial_enforced' => (bool) $trialDays,
+            'trial_ends_at' => $trialDays ? now()->addDays((int) $trialDays) : null,
         ]);
         $user = User::create([
             'clinic_id' => $clinic->id,

@@ -32,10 +32,10 @@ class Clinic extends Model
         return $this->hasOne(Subscription::class);
     }
 
-    /** Read-only: view existing data, add or change nothing. Only an expired, unactivated trial does this; clinics without a subscription never do. */
+    /** Read-only: view existing data, add or change nothing. Triggered by an expired, unactivated trial or by a subscription still pending activation; clinics without a subscription never do. */
     public function isReadOnly(): bool
     {
-        return (bool) $this->subscription?->trialExpired();
+        return (bool) $this->subscription?->trialExpired() || $this->subscription?->status === 'pending';
     }
 
     /** Allocate the next invoice number atomically (row lock). */

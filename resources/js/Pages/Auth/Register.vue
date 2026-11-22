@@ -10,18 +10,18 @@ const submit = () => form.post('/register');
 
 const C = {
     ar: {
-        title: 'إنشاء حساب عيادة', sub: 'فترة تجريبية مجانية {days} يوم. لا نطلب أي وسيلة دفع.',
+        title: 'إنشاء حساب عيادة', sub: 'إنشاء الحساب مجاني. لا نطلب أي وسيلة دفع.',
         name: 'اسمك (مالك العيادة) *', clinic: 'اسم العيادة *', email: 'البريد الإلكتروني *',
         password: 'كلمة المرور *', confirm: 'تأكيد كلمة المرور *', submit: 'إنشاء الحساب',
         have: 'عندك حساب؟', login: 'تسجيل الدخول', home: 'الرئيسية',
-        planPicked: 'الباقة المختارة', trialNote: 'بعد انتهاء التجربة بدون تفعيل، الحساب بيتحول للاطلاع فقط وبياناتك بتفضل موجودة.',
+        planPicked: 'الباقة المختارة', trialNote: 'التفعيل بيتم يدويًا من فريقنا بعد إنشاء الحساب. حتى يتم، الحساب للاطلاع فقط وبياناتك محفوظة.',
     },
     en: {
-        title: 'Create a clinic account', sub: 'A free {days}-day trial. No payment method asked.',
+        title: 'Create a clinic account', sub: 'Creating an account is free. No payment method asked.',
         name: 'Your name (clinic owner) *', clinic: 'Clinic name *', email: 'Email *',
         password: 'Password *', confirm: 'Confirm password *', submit: 'Create account',
         have: 'Have an account?', login: 'Log in', home: 'Home',
-        planPicked: 'Selected plan', trialNote: 'After the trial ends without activation, the account becomes read-only and your data stays available.',
+        planPicked: 'Selected plan', trialNote: 'Activation is done manually by our team after sign-up. Until then the account is read-only and your data stays saved.',
     },
 };
 const c = computed(() => C[i18n.locale] || C.ar);
@@ -39,7 +39,7 @@ const tt = (s) => s.replace('{days}', props.trialDays);
                     </span>
                 </div>
                 <h1 class="mt-3 text-2xl font-bold text-ink-900">{{ c.title }}</h1>
-                <p class="mt-1 text-sm text-slate-500">{{ tt(c.sub) }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ c.sub }}</p>
                 <p v-if="plan" class="mt-1 text-xs font-semibold text-brand-700">{{ c.planPicked }}: {{ i18n.locale === 'ar' ? plan.name_ar : plan.name_en }}</p>
             </div>
             <form @submit.prevent="submit" class="space-y-4">

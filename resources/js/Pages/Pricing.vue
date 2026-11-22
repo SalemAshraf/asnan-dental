@@ -13,7 +13,7 @@ const submit = () => form.post('/pricing/inquiry', { onSuccess: () => form.reset
 
 const C = {
     ar: {
-        title: 'الباقات والأسعار', sub: 'كل عيادة جديدة بتحصل على فترة تجريبية مجانية {days} يوم، بدون أي وسيلة دفع.',
+        title: 'الباقات والأسعار', sub: 'أنشئ حساب عيادتك مجانًا، بدون أي وسيلة دفع. التفعيل بيتم يدويًا بعد التواصل.',
         noPlansH: 'الأسعار لسه ما اتحددتش', noPlansP: 'الباقات والأسعار النهائية لسه تحت التحديد. سيب بياناتك وهنتواصل معاك أول ما تتاح، أو ابدأ التجربة المجانية دلوقتي.',
         contactUs: 'السعر عند التواصل', perMonth: 'شهريًا', perYear: 'سنويًا', yearly: 'سنوي',
         users: 'حتى {n} مستخدم', patients: 'حتى {n} مريض', trial: 'تجربة {n} يوم',
@@ -24,7 +24,7 @@ const C = {
         noPayment: 'لا يتم تحصيل أي مبلغ من الموقع. التفعيل يتم يدويًا بعد التواصل.',
     },
     en: {
-        title: 'Plans and pricing', sub: 'Every new clinic gets a free {days}-day trial, with no payment method asked.',
+        title: 'Plans and pricing', sub: 'Create your clinic account for free, with no payment method asked. Activation is manual after we talk.',
         noPlansH: 'Pricing is not set yet', noPlansP: 'Final plans and prices are still being decided. Leave your details and we will reach out once available, or start the free trial now.',
         contactUs: 'Price on request', perMonth: '/month', perYear: '/year', yearly: 'yearly',
         users: 'Up to {n} users', patients: 'Up to {n} patients', trial: '{n}-day trial',
@@ -62,7 +62,7 @@ const features = (p) => (i18n.locale === 'ar' ? p.features_ar : p.features_en) |
 
         <main class="mx-auto max-w-6xl px-5 py-12">
             <h1 class="text-center text-3xl font-bold sm:text-4xl">{{ c.title }}</h1>
-            <p class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ tt(c.sub, trialDays) }}</p>
+            <p class="mx-auto mt-3 max-w-2xl text-center text-slate-600">{{ c.sub }}</p>
 
             <div v-if="plans.length" class="mt-10 grid gap-6 md:grid-cols-3">
                 <div v-for="p in plans" :key="p.slug" class="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

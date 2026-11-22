@@ -3,7 +3,26 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:url_launcher/url_launcher.dart';
 
+import 'dart:async';
+
 import 'src/api.dart';
+
+const appointmentStatusAr = {
+  'scheduled': 'مجدول',
+  'confirmed': 'مؤكد',
+  'checked_in': 'تم تسجيل الحضور',
+  'completed': 'مكتمل',
+  'cancelled': 'ملغي',
+  'no_show': 'لم يحضر',
+};
+
+const reminderKindAr = {
+  'recall': 'تذكير متابعة',
+  'appointment': 'تذكير موعد',
+};
+
+String arLabel(Map<String, String> map, Object? key) =>
+    map[key?.toString()] ?? key?.toString() ?? '';
 
 void main() => runApp(const TaqwimApp());
 
@@ -271,7 +290,7 @@ class _AppointmentsTabState extends State<AppointmentsTab> {
                       ),
                       title: Text(patient?['name']?.toString() ?? '—'),
                       subtitle: Text(
-                          '${a['branch']?['name'] ?? ''} · ${a['status'] ?? ''}'),
+                          '${a['branch']?['name'] ?? ''} · ${arLabel(appointmentStatusAr, a['status'])}'),
                     ),
                   );
                 },
@@ -353,6 +372,7 @@ class RemindersTab extends StatefulWidget {
 
 class _RemindersTabState extends State<RemindersTab> {
   late Future<List<dynamic>> _future;
+  int? _pendingConfirmId;
 
   @override
   void initState() {
@@ -370,9 +390,9 @@ class _RemindersTabState extends State<RemindersTab> {
     final text = reminder['template_text']?.toString() ?? '';
     final uri = Uri.parse(
         'https://wa.me/${phone.replaceAll('+', '')}?text=${Uri.encodeComponent(text)}');
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-    await widget.api.markReminderSent(reminder['id'] as int);
-    _reload();
+    unawaited(launchUrl(uri, mode: LaunchMode.externalApplication));
+    // Nothing is marked yet: staff must explicitly confirm below.
+    setState(() => _pendingConfirmId = reminder['id'] as int);
   }
 
   @override
@@ -411,13 +431,33 @@ class _RemindersTabState extends State<RemindersTab> {
                   leading: const Icon(Icons.notifications_active_outlined),
                   title: Text(patient?['name']?.toString() ?? '—'),
                   subtitle: Text(
-                      '${r['kind'] ?? ''} · ${r['scheduled_for'] ?? ''}\n${patient?['phone'] ?? ''}'),
+                      '${arLabel(reminderKindAr, r['kind'])} · ${r['scheduled_for'] ?? ''}\n${patient?['phone'] ?? ''}'),
                   isThreeLine: true,
-                  trailing: FilledButton.tonalIcon(
-                    icon: const Icon(Icons.send, size: 16),
-                    label: const Text('واتساب'),
-                    onPressed: () => _sendWhatsApp(r),
-                  ),
+                  trailing: _pendingConfirmId == r['id']
+                      ? Wrap(
+                          spacing: 4,
+                          children: [
+                            FilledButton(
+                              onPressed: () async {
+                                await widget.api
+                                    .markReminderSent(r['id'] as int);
+                                _pendingConfirmId = null;
+                                _reload();
+                              },
+                              child: const Text('تم الإرسال'),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  setState(() => _pendingConfirmId = null),
+                              child: const Text('لم تُرسل'),
+                            ),
+                          ],
+                        )
+                      : FilledButton.tonalIcon(
+                          icon: const Icon(Icons.send, size: 16),
+                          label: const Text('واتساب'),
+                          onPressed: () => _sendWhatsApp(r),
+                        ),
                 ),
               );
             },

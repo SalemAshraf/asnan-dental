@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Patient;
 use App\Models\Payment;
 use App\Models\TreatmentPlanItem;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -54,6 +56,9 @@ class ReportController extends Controller
         }
         foreach ($d['topServices'] as $r) {
             $rows[] = ['top_services', $r['name'], "qty={$r['count']};total=".$money($r['total_minor']), $currency];
+        }
+        foreach ($d['commissions'] as $r) {
+            $rows[] = ['commission', $r['dentist'], "rate=".($r['rate_bp'] / 100)."%;base=".$money($r['base_minor']).";commission=".$money($r['commission_minor']), $currency];
         }
 
         $filename = 'taqwim-report-'.$d['range']['from'].'-to-'.$d['range']['to'].'.csv';
@@ -140,6 +145,29 @@ class ReportController extends Controller
             'cancelled' => $rows->where('status', 'cancelled')->count(),
         ])->sortByDesc('total')->values();
 
+        // Doctor commissions: invoiced production (issued/paid invoices in range)
+        // attributed to each dentist through plan items, times the dentist's rate.
+        // Invoice items carry no clinic_id: scope through the parent invoice (tenant-safe).
+        $baseByDentist = InvoiceItem::whereNotNull('treatment_plan_item_id')
+            ->whereHas('invoice', fn ($q) => $q->where('clinic_id', $request->user()->clinic_id)
+                ->whereBetween('created_at', [$fromUtc, $toUtc])
+                ->whereIn('status', ['issued', 'partially_paid', 'paid']))
+            ->with('treatmentPlanItem.plan:id,dentist_id')
+            ->get(['treatment_plan_item_id', 'total_minor'])
+            ->filter(fn ($i) => $i->treatmentPlanItem?->plan?->dentist_id)
+            ->groupBy(fn ($i) => $i->treatmentPlanItem->plan->dentist_id)
+            ->map(fn ($rows) => (int) $rows->sum('total_minor'));
+
+        $commissions = User::where('role', User::ROLE_DENTIST)->where('is_active', true)
+            ->get(['id', 'name', 'commission_bp'])
+            ->map(fn ($d) => [
+                'id' => $d->id,
+                'dentist' => $d->name,
+                'rate_bp' => (int) $d->commission_bp,
+                'base_minor' => (int) ($baseByDentist[$d->id] ?? 0),
+                'commission_minor' => (int) intdiv(($baseByDentist[$d->id] ?? 0) * $d->commission_bp, 10000),
+            ])->values();
+
         // Top services by accepted/completed plan items created in range.
         // Items carry no clinic_id: scope through the parent plan (tenant-safe).
         $topServices = TreatmentPlanItem::whereIn('status', ['accepted', 'in_progress', 'completed'])
@@ -173,6 +201,7 @@ class ReportController extends Controller
             ],
             'byMethod' => $byMethod,
             'byStatus' => $byStatus,
+            'commissions' => $commissions,
             'perDentist' => $perDentist,
             'topServices' => $topServices,
             'daily' => collect($collectedSeries)->map(fn ($v, $k) => [

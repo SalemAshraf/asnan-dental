@@ -17,4 +17,9 @@ class InvoiceItem extends Model
     {
         return $this->belongsTo(Invoice::class);
     }
+
+    public function treatmentPlanItem()
+    {
+        return $this->belongsTo(TreatmentPlanItem::class, 'treatment_plan_item_id');
+    }
 }

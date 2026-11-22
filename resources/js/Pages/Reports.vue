@@ -9,7 +9,7 @@ import { statusLabel, t } from '@/i18n';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-const props = defineProps({ range: Object, currency: String, cards: Object, byMethod: Object, byStatus: Object, perDentist: Array, topServices: Array, daily: Array });
+const props = defineProps({ range: Object, currency: String, cards: Object, byMethod: Object, byStatus: Object, perDentist: Array, topServices: Array, daily: Array, commissions: Array });
 const money = (v) => fmt(v, props.currency);
 
 const from = ref(props.range.from);
@@ -20,6 +20,9 @@ const preset = (days) => {
     from.value = f.toISOString().slice(0, 10); to.value = t.toISOString().slice(0, 10); apply();
 };
 const methodMax = Math.max(1, ...Object.values(props.byMethod));
+
+const rates = ref(Object.fromEntries((props.commissions ?? []).map((c) => [c.id, (c.rate_bp / 100).toString()])));
+const saveRate = (id) => router.patch(`/team/${id}/commission`, { commission_bp: Math.round(parseFloat(rates.value[id] || '0') * 100) }, { preserveScroll: true });
 </script>
 
 <template>
@@ -91,6 +94,30 @@ const methodMax = Math.max(1, ...Object.values(props.byMethod));
                             <td class="td tabular-nums text-emerald-700">{{ d.completed }}</td>
                             <td class="td tabular-nums text-rose-700">{{ d.no_show }}</td>
                             <td class="td !px-0 tabular-nums text-slate-500">{{ d.cancelled }}</td>
+                        </tr>
+                    </tbody>
+                </table></div>
+            </div>
+
+            <div class="card">
+                <h2 class="font-bold text-ink-900">{{ t('rep.commissions') }}</h2>
+                <p class="mb-3 text-xs text-slate-500">{{ t('rep.commissionsHint') }}</p>
+                <EmptyState v-if="!(commissions ?? []).length" icon="cash" :title="t('rep.comm.empty')" />
+                <div v-else class="overflow-x-auto"><table class="w-full text-sm">
+                    <thead class="border-b border-slate-200">
+                        <tr><th class="th !px-0">{{ t('rep.comm.dentist') }}</th><th class="th">{{ t('rep.comm.rate') }}</th><th class="th text-end">{{ t('rep.comm.base') }}</th><th class="th !px-0 text-end">{{ t('rep.comm.due') }}</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr v-for="c in commissions" :key="c.id">
+                            <td class="td !px-0 font-medium">{{ c.dentist }}</td>
+                            <td class="td">
+                                <span class="flex items-center gap-1.5">
+                                    <input v-model="rates[c.id]" type="number" min="0" max="100" step="0.5" class="input !inline-block !w-20 !px-2 !py-1 text-xs" dir="ltr" @keyup.enter="saveRate(c.id)" />
+                                    <button type="button" class="btn-secondary btn-sm" @click="saveRate(c.id)">{{ t('rep.comm.save') }}</button>
+                                </span>
+                            </td>
+                            <td class="td text-end tabular-nums">{{ money(c.base_minor) }}</td>
+                            <td class="td !px-0 text-end tabular-nums font-semibold text-brand-800">{{ money(c.commission_minor) }}</td>
                         </tr>
                     </tbody>
                 </table></div>

@@ -87,6 +87,10 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::post('recalls', [\App\Http\Controllers\RecallController::class, 'store'])->name('recalls.store');
     Route::post('recalls/{recall}/transition', [\App\Http\Controllers\RecallController::class, 'transition'])->name('recalls.transition');
     Route::patch('reminders/{reminder}', [\App\Http\Controllers\ReminderMessageController::class, 'update'])->name('reminders.update');
+    Route::get('expenses', [\App\Http\Controllers\ExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('expenses', [\App\Http\Controllers\ExpenseController::class, 'store'])->name('expenses.store');
+    Route::delete('expenses/{expense}', [\App\Http\Controllers\ExpenseController::class, 'destroy'])->name('expenses.destroy');
+    Route::patch('team/{user}/commission', [\App\Http\Controllers\CommissionController::class, 'update'])->name('team.commission');
 
     Route::get('reports', \App\Http\Controllers\ReportController::class)->name('reports');
     Route::get('reports/export', [\App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');

@@ -84,7 +84,7 @@ const dstr = (d) => (d ? String(d).slice(0, 10) : '');
         <div class="card !p-0 overflow-hidden">
             <EmptyState v-if="!(expenses ?? []).length" icon="cash" :title="t('exp.empty')" />
             <div v-else class="table-wrap">
-                <table class="table">
+                <table class="table stack">
                     <thead>
                         <tr>
                             <th class="th">{{ t('exp.form.date') }}</th>

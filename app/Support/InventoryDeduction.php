@@ -37,13 +37,31 @@ class InventoryDeduction
                 return; // already deducted and not reversed
             }
 
-            $rules = ServiceSupply::with('item')->where('service_id', $locked->service_id)->get();
-            foreach ($rules as $rule) {
-                if (! $rule->item) {
-                    continue;
+            $rules = ServiceSupply::with('item')->where('service_id', $locked->service_id)->get()
+                ->filter(fn ($rule) => $rule->item !== null);
+
+            // Lock the stock rows in a stable order before reading balances so
+            // concurrent completions of different plan items consuming the same
+            // stock serialize instead of racing.
+            $stockRows = \App\Models\InventoryItem::whereIn('id', $rules->pluck('inventory_item_id'))
+                ->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+
+            // All-or-nothing: if any mapped item lacks stock, deduct nothing and
+            // roll back rather than leaving a half-applied deduction. Completing
+            // the treatment is never blocked by stock tracking.
+            $need = $rules->mapWithKeys(fn ($rule) => [
+                $rule->inventory_item_id => $rule->qty * max(1, (int) $locked->qty),
+            ]);
+            foreach ($need as $itemId => $qty) {
+                $item = $stockRows->get($itemId);
+                if (! $item || $item->quantity < $qty) {
+                    return;
                 }
-                $change = -1 * $rule->qty * max(1, (int) $locked->qty);
-                $rule->item->increment('quantity', $change);
+            }
+
+            foreach ($rules as $rule) {
+                $change = -1 * $need[$rule->inventory_item_id];
+                $stockRows[$rule->inventory_item_id]->increment('quantity', $change);
                 InventoryMovement::create([
                     'clinic_id' => $rule->clinic_id,
                     'inventory_item_id' => $rule->inventory_item_id,
@@ -83,16 +101,15 @@ class InventoryDeduction
                 return; // nothing to restore
             }
 
-            $rules = ServiceSupply::with('item')->where('service_id', $locked->service_id)->get();
-            foreach ($rules as $rule) {
-                if (! $rule->item) {
-                    continue;
-                }
-                $change = $rule->qty * max(1, (int) $locked->qty);
-                $rule->item->increment('quantity', $change);
+            // Reverse exactly what was deducted (recorded movements), so later
+            // rule changes cannot distort the compensating amounts.
+            foreach ($movements->where('change', '<', 0) as $deduction) {
+                $change = -1 * (float) $deduction->change;
+                \App\Models\InventoryItem::whereKey($deduction->inventory_item_id)
+                    ->lockForUpdate()->first()?->increment('quantity', $change);
                 InventoryMovement::create([
-                    'clinic_id' => $rule->clinic_id,
-                    'inventory_item_id' => $rule->inventory_item_id,
+                    'clinic_id' => $deduction->clinic_id,
+                    'inventory_item_id' => $deduction->inventory_item_id,
                     'change' => $change,
                     'reason' => 'procedure',
                     'reference' => $reference,

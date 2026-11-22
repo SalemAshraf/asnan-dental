@@ -104,7 +104,7 @@ const dt = (d) => (d ? String(d).slice(0, 16).replace('T', ' ') : '');
         <div class="card mt-4 !p-0 overflow-hidden">
             <EmptyState v-if="!(items ?? []).length" icon="services" :title="t('inv.itemsEmpty')" />
             <div v-else class="table-wrap">
-                <table class="table">
+                <table class="table stack">
                     <thead>
                         <tr>
                             <th class="th">{{ t('inv.form.name') }}</th>
@@ -155,7 +155,7 @@ const dt = (d) => (d ? String(d).slice(0, 16).replace('T', ' ') : '');
             <h2 class="px-4 pt-4 font-bold text-ink-900">{{ t('inv.recent') }}</h2>
             <EmptyState v-if="!(movements ?? []).length" icon="clock" :title="t('inv.movementsEmpty')" />
             <div v-else class="table-wrap mt-2">
-                <table class="table">
+                <table class="table stack">
                     <thead>
                         <tr>
                             <th class="th">{{ t('inv.form.item') }}</th>

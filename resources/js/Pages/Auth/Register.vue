@@ -34,7 +34,7 @@ const tt = (s) => s.replace('{days}', props.trialDays);
         <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
             <div class="mb-6 text-center">
                 <div class="flex justify-center text-brand-700">
-                    <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-14 w-14 rounded-2xl shadow-lg">
+                    <img src="/brand/taqwim-lockup-slogan-light.svg" alt="تقويم" class="h-16 w-auto">
                 </div>
                 <h1 class="mt-3 text-2xl font-bold text-ink-900">{{ c.title }}</h1>
                 <p class="mt-1 text-sm text-slate-500">{{ c.sub }}</p>

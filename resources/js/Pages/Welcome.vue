@@ -71,7 +71,7 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
         <header class="sticky top-0 z-30 border-b border-slate-200/70 bg-canvas/90 backdrop-blur">
             <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
                 <span class="flex items-center gap-3 text-lg font-bold">
-                    <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-10 w-10 rounded-xl shadow">{{ c.foot }}
+                    <img src="/brand/taqwim-lockup-light.svg" alt="تقويم" class="h-9 w-auto">
                 </span>
                 <nav class="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex"><a v-for="n in c.nav" :key="n[0]" :href="n[0]" class="hover:text-ink-900">{{ n[1] }}</a></nav>
                 <div class="flex items-center gap-2">
@@ -176,12 +176,15 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
             </section>
 
             <section class="border-t border-slate-200 bg-brand-700 py-14 text-center text-white">
+                <img src="/brand/taqwim-lockup-slogan-dark.svg" alt="تقويم" class="mx-auto mb-6 h-16 w-auto">
                 <h2 class="text-3xl font-bold">{{ c.fin }}</h2>
                 <p class="mt-2 text-teal-100">{{ c.finP }}</p>
                 <Link v-if="canRegister" href="/register" class="mt-6 inline-block rounded-xl bg-white px-6 py-3 font-bold text-brand-800 shadow hover:bg-teal-50">{{ c.cta }}</Link>
             </section>
         </main>
 
-        <footer class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">{{ c.foot }}</footer>
+        <footer class="border-t border-slate-200 py-8 text-center text-sm text-slate-500">
+            <img src="/brand/taqwim-lockup-slogan-light.svg" alt="تقويم" class="mx-auto h-14 w-auto">
+        </footer>
     </div>
 </template>

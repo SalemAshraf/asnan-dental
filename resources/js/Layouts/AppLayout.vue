@@ -61,8 +61,8 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
             :class="[open ? 'translate-x-0' : 'rtl:translate-x-full rtl:lg:translate-x-0', collapsed ? 'lg:w-[76px]' : 'lg:w-64']" style="inset-inline-start: 0">
             <div class="flex h-16 shrink-0 items-center justify-between gap-2 px-4" :class="collapsed ? 'lg:justify-center lg:px-0' : ''">
                 <Link href="/dashboard" class="flex min-w-0 items-center gap-3 text-lg font-bold text-ink-900" title="تقويم">
-                    <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-10 w-10 shrink-0 rounded-xl shadow">
-                    <span class="truncate" :class="collapsed ? 'lg:hidden' : ''">تقويم</span>
+                    <img src="/brand/taqwim-lockup-light.svg" alt="تقويم" class="h-9 w-auto" :class="collapsed ? 'lg:hidden' : ''">
+                    <img src="/brand/taqwim-icon.svg" alt="" class="h-10 w-10 shrink-0 rounded-xl shadow" :class="collapsed ? 'hidden lg:block' : 'hidden'">
                 </Link>
                 <button class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 lg:hidden" :aria-label="t('nav.close')" @click="open = false"><Icon name="close" :size="20" /></button>
             </div>

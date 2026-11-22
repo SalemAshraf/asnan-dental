@@ -17,8 +17,8 @@ const isCurrent = (l) => (l.exact ? window.location.pathname === l.href : window
         <header class="border-b border-slate-200 bg-white">
             <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-3">
                 <span class="flex items-center gap-2 font-bold">
-                    <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-8 w-8 rounded-lg shadow">
-                    تقويم — لوحة المنصة
+                    <img src="/brand/taqwim-lockup-light.svg" alt="تقويم" class="h-8 w-auto">
+                    <span class="text-slate-500">لوحة المنصة</span>
                 </span>
                 <nav class="flex items-center gap-1 text-sm">
                     <Link v-for="l in links" :key="l.href" :href="l.href" class="rounded-lg px-3 py-1.5 font-medium" :class="isCurrent(l) ? 'bg-brand-50 text-brand-800' : 'text-slate-600 hover:bg-slate-100'">{{ l.label }}</Link>

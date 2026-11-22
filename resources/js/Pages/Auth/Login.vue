@@ -22,10 +22,9 @@ const c = computed(() => C[i18n.locale] || C.ar);
             <div class="rounded-2xl bg-white p-8 shadow-2xl">
                 <div class="mb-6 text-center">
                     <div class="flex justify-center text-brand-700">
-                        <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-14 w-14 rounded-2xl shadow-lg">
+                        <img src="/brand/taqwim-lockup-slogan-light.svg" alt="تقويم" class="h-20 w-auto">
                     </div>
-                    <h1 class="mt-3 text-2xl font-bold text-ink-900">تقويم</h1>
-                    <p class="text-sm text-slate-500">{{ c.tagline }}</p>
+                    <p class="mt-3 text-sm text-slate-500">{{ c.tagline }}</p>
                 </div>
                 <form @submit.prevent="submit" class="space-y-4">
                     <div>

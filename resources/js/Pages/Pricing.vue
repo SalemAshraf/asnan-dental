@@ -48,7 +48,7 @@ const features = (p) => (i18n.locale === 'ar' ? p.features_ar : p.features_en) |
         <header class="sticky top-0 z-30 border-b border-slate-200/70 bg-canvas/90 backdrop-blur">
             <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
                 <Link href="/" class="flex items-center gap-3 text-lg font-bold">
-                    <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-10 w-10 rounded-xl shadow">{{ i18n.locale === 'ar' ? 'تقويم' : 'Taqwim' }}
+                    <img src="/brand/taqwim-lockup-light.svg" alt="تقويم" class="h-9 w-auto">
                 </Link>
                 <div class="flex items-center gap-2">
                     <button class="btn-secondary btn-sm" @click="toggleLocale">{{ i18n.locale === 'ar' ? 'EN' : 'ع' }}</button>

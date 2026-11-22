@@ -38,9 +38,7 @@ const svcName = (s) => (i18n.locale === 'ar' ? s.name_ar : (s.name_en || s.name_
         <div class="w-full max-w-md">
             <div class="mb-5 flex items-center justify-between">
                 <span class="flex items-center gap-2 font-bold text-ink-900">
-                    <span class="grid h-9 w-9 place-items-center rounded-xl bg-brand-700 text-white shadow">
-                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C9.5 2 8.8 3.4 7.2 3.4 5 3.4 3.5 5.6 3.5 8c0 3.6 1.7 4.7 2.1 7.4.3 2 .7 6.6 2.6 6.6 1.7 0 1.2-3.4 1.7-5.5.3-1.3.9-2 2.1-2s1.8.7 2.1 2c.5 2.1 0 5.5 1.7 5.5 1.9 0 2.3-4.6 2.6-6.6.4-2.7 2.1-3.8 2.1-7.4 0-2.4-1.5-4.6-3.7-4.6-1.6 0-2.3-1.4-4.8-1.4z"/></svg>
-                    </span>{{ clinicName }}
+                    <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-9 w-9 rounded-xl shadow">{{ clinicName }}
                 </span>
                 <button class="btn-secondary btn-sm" @click="toggleLocale">{{ i18n.locale === 'ar' ? 'EN' : 'ع' }}</button>
             </div>
@@ -70,7 +68,7 @@ const svcName = (s) => (i18n.locale === 'ar' ? s.name_ar : (s.name_en || s.name_
                             <option v-for="s in services" :key="s.id" :value="s.id">{{ svcName(s) }} — {{ fmt(s.default_price_minor, currency) }}</option>
                         </select>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <div>
                             <label class="label">{{ c.date }}</label>
                             <input v-model="form.preferred_date" type="date" dir="ltr" class="input">

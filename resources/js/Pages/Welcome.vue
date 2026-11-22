@@ -71,9 +71,7 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
         <header class="sticky top-0 z-30 border-b border-slate-200/70 bg-canvas/90 backdrop-blur">
             <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
                 <span class="flex items-center gap-3 text-lg font-bold">
-                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-brand-700 text-white shadow">
-                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C9.5 2 8.8 3.4 7.2 3.4 5 3.4 3.5 5.6 3.5 8c0 3.6 1.7 4.7 2.1 7.4.3 2 .7 6.6 2.6 6.6 1.7 0 1.2-3.4 1.7-5.5.3-1.3.9-2 2.1-2s1.8.7 2.1 2c.5 2.1 0 5.5 1.7 5.5 1.9 0 2.3-4.6 2.6-6.6.4-2.7 2.1-3.8 2.1-7.4 0-2.4-1.5-4.6-3.7-4.6-1.6 0-2.3-1.4-4.8-1.4z"/></svg>
-                    </span>{{ c.foot }}
+                    <img src="/brand/taqwim-icon.svg" alt="تقويم" class="h-10 w-10 rounded-xl shadow">{{ c.foot }}
                 </span>
                 <nav class="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex"><a v-for="n in c.nav" :key="n[0]" :href="n[0]" class="hover:text-ink-900">{{ n[1] }}</a></nav>
                 <div class="flex items-center gap-2">

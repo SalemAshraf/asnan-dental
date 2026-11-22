@@ -77,6 +77,9 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::post('patients/{patient}/images', [PatientImageController::class, 'store'])->name('patient-images.store');
     Route::get('patient-images/{image}/file', [PatientImageController::class, 'file'])->name('patient-images.file');
     Route::delete('patient-images/{image}', [PatientImageController::class, 'destroy'])->name('patient-images.destroy');
+    Route::post('patients/{patient}/prescriptions', [\App\Http\Controllers\PrescriptionController::class, 'store'])->name('prescriptions.store');
+    Route::put('prescriptions/{prescription}', [\App\Http\Controllers\PrescriptionController::class, 'update'])->name('prescriptions.update');
+    Route::delete('prescriptions/{prescription}', [\App\Http\Controllers\PrescriptionController::class, 'destroy'])->name('prescriptions.destroy');
     Route::post('patients/{patient}/plans', [TreatmentPlanController::class, 'store'])->name('plans.store');
 
     Route::post('plans/{plan}/transition', [TreatmentPlanController::class, 'transition'])->name('plans.transition');

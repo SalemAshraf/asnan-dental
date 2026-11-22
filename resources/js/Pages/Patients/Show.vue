@@ -13,7 +13,7 @@ const props = defineProps({ patient: Object, appointments: Array, chart: Object,
 const tab = ref('info');
 const tabs = [
     ['info', 'pat.show.tab.info'], ['chart', 'pat.show.tab.chart'], ['plans', 'pat.show.tab.plans'],
-    ...(props.can.clinical ? [['images', 'pat.show.tab.images']] : []),
+    ...(props.can.clinical ? [['images', 'pat.show.tab.images'], ['rx', 'rx.title']] : []),
     ['billing', 'pat.show.tab.billing'], ['consents', 'pat.show.tab.consents'],
 ];
 
@@ -35,6 +35,29 @@ const removeImage = (id) => {
     router.delete(`/patient-images/${id}`, { preserveScroll: true });
 };
 const imgUrl = (id) => `/patient-images/${id}/file`;
+
+const blankItem = () => ({ drug_name: '', dose: '', frequency: '', duration: '', instructions: '' });
+const rxEditing = ref(null);
+const rx = useForm({ prescribed_on: new Date().toISOString().slice(0, 10), notes: '', items: [blankItem()] });
+const rxAddItem = () => rx.items.push(blankItem());
+const rxRemoveItem = (i) => { if (rx.items.length > 1) rx.items.splice(i, 1); };
+const rxEdit = (p) => {
+    rxEditing.value = p.id;
+    rx.prescribed_on = dstr(p.prescribed_on);
+    rx.notes = p.notes || '';
+    rx.items = (p.items ?? []).map((i) => ({ drug_name: i.drug_name, dose: i.dose || '', frequency: i.frequency || '', duration: i.duration || '', instructions: i.instructions || '' }));
+    if (!rx.items.length) rx.items = [blankItem()];
+};
+const rxCancel = () => { rxEditing.value = null; rx.reset(); rx.items = [blankItem()]; rx.prescribed_on = new Date().toISOString().slice(0, 10); };
+const saveRx = () => {
+    const opts = { preserveScroll: true, onSuccess: () => rxCancel() };
+    if (rxEditing.value) rx.put(`/prescriptions/${rxEditing.value}`, opts);
+    else rx.post(`/patients/${props.patient.id}/prescriptions`, opts);
+};
+const removeRx = (id) => {
+    if (!window.confirm(t('rx.confirmDelete'))) return;
+    router.delete(`/prescriptions/${id}`, { preserveScroll: true });
+};
 const dstr = (d) => (d ? String(d).slice(0, 10) : '');
 
 const plan = useForm({ title: '', notes: '' });
@@ -211,6 +234,87 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
                         </div>
                         <button type="button" class="btn-secondary btn-sm shrink-0 !text-rose-600" @click="removeImage(im.id)">{{ t('pat.img.delete') }}</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="tab === 'rx' && can.clinical">
+            <form @submit.prevent="saveRx" class="card mb-4">
+                <h2 class="mb-1 font-bold text-ink-900">{{ rxEditing ? t('rx.edit') : t('rx.new') }}</h2>
+                <p class="mb-3 text-xs text-slate-500">{{ t('rx.freeTextHint') }}</p>
+                <div class="mb-3 grid gap-3 sm:grid-cols-3">
+                    <label class="block">
+                        <span class="mb-1 block text-xs text-slate-500">{{ t('rx.date') }}</span>
+                        <input v-model="rx.prescribed_on" type="date" required class="input" dir="ltr" />
+                    </label>
+                    <label class="block sm:col-span-2">
+                        <span class="mb-1 block text-xs text-slate-500">{{ t('rx.notes') }}</span>
+                        <input v-model="rx.notes" type="text" maxlength="2000" class="input" />
+                    </label>
+                </div>
+                <div v-for="(item, i) in rx.items" :key="i" class="mb-3 rounded-lg border border-slate-200 p-3">
+                    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        <label class="block lg:col-span-2">
+                            <span class="mb-1 block text-xs text-slate-500">{{ t('rx.drug') }}</span>
+                            <input v-model="item.drug_name" type="text" required maxlength="190" class="input" />
+                        </label>
+                        <label class="block">
+                            <span class="mb-1 block text-xs text-slate-500">{{ t('rx.dose') }}</span>
+                            <input v-model="item.dose" type="text" maxlength="120" class="input" />
+                        </label>
+                        <label class="block">
+                            <span class="mb-1 block text-xs text-slate-500">{{ t('rx.freq') }}</span>
+                            <input v-model="item.frequency" type="text" maxlength="120" class="input" />
+                        </label>
+                        <label class="block">
+                            <span class="mb-1 block text-xs text-slate-500">{{ t('rx.duration') }}</span>
+                            <input v-model="item.duration" type="text" maxlength="120" class="input" />
+                        </label>
+                        <label class="block lg:col-span-3">
+                            <span class="mb-1 block text-xs text-slate-500">{{ t('rx.instructions') }}</span>
+                            <input v-model="item.instructions" type="text" maxlength="500" class="input" />
+                        </label>
+                    </div>
+                    <div class="mt-2 flex justify-end">
+                        <button v-if="rx.items.length > 1" type="button" class="btn-secondary btn-sm !text-rose-600" @click="rxRemoveItem(i)">{{ t('rx.removeItem') }}</button>
+                    </div>
+                </div>
+                <div v-if="rx.errors.items" class="mb-2 text-sm text-rose-600">{{ rx.errors.items }}</div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="btn-secondary" @click="rxAddItem"><Icon name="plus" :size="15" /> {{ t('rx.addItem') }}</button>
+                    <button type="submit" class="btn-primary" :disabled="rx.processing">{{ t('rx.save') }}</button>
+                    <button v-if="rxEditing" type="button" class="btn-secondary" @click="rxCancel">{{ t('rx.cancel') }}</button>
+                </div>
+            </form>
+
+            <EmptyState v-if="!(patient.prescriptions ?? []).length" icon="services" :title="t('rx.empty')" />
+            <div v-else class="space-y-3">
+                <div v-for="p in patient.prescriptions" :key="p.id" class="card !p-4">
+                    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+                        <div class="text-sm">
+                            <span class="font-bold tabular-nums" dir="ltr">{{ dstr(p.prescribed_on) }}</span>
+                            <span class="ms-2 text-xs text-slate-500">{{ t('rx.by') }} {{ p.prescriber?.name }} · {{ t('rx.itemsCount', { n: (p.items ?? []).length }) }}</span>
+                            <span v-if="p.notes" class="block text-xs text-slate-500">{{ p.notes }}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" class="btn-secondary btn-sm" @click="rxEdit(p)">{{ t('rx.edit') }}</button>
+                            <button type="button" class="btn-secondary btn-sm !text-rose-600" @click="removeRx(p.id)">{{ t('rx.delete') }}</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto"><table class="w-full text-sm">
+                        <thead class="border-b border-slate-200">
+                            <tr><th class="th !px-0">{{ t('rx.drug') }}</th><th class="th">{{ t('rx.dose') }}</th><th class="th">{{ t('rx.freq') }}</th><th class="th">{{ t('rx.duration') }}</th><th class="th !px-0">{{ t('rx.instructions') }}</th></tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr v-for="i in p.items" :key="i.id">
+                                <td class="td !px-0 font-semibold">{{ i.drug_name }}</td>
+                                <td class="td">{{ i.dose || '—' }}</td>
+                                <td class="td">{{ i.frequency || '—' }}</td>
+                                <td class="td">{{ i.duration || '—' }}</td>
+                                <td class="td !px-0 text-slate-600">{{ i.instructions || '—' }}</td>
+                            </tr>
+                        </tbody>
+                    </table></div>
                 </div>
             </div>
         </div>

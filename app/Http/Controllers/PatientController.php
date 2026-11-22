@@ -61,6 +61,7 @@ class PatientController extends Controller
         ];
         if ($user->isClinical()) {
             $load['images'] = fn ($q) => $q->with('uploader:id,name');
+            $load['prescriptions'] = fn ($q) => $q->with(['items', 'prescriber:id,name']);
         }
         $patient->load($load);
 

@@ -39,6 +39,11 @@ class Patient extends Model
         return $this->hasMany(PatientImage::class)->orderByDesc('id');
     }
 
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(Prescription::class)->orderByDesc('prescribed_on')->orderByDesc('id');
+    }
+
     public function odontogramEntries(): HasMany
     {
         return $this->hasMany(OdontogramEntry::class);

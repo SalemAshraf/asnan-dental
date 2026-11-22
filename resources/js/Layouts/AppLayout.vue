@@ -8,7 +8,15 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const clinic = computed(() => page.props.auth?.clinic);
 const flash = computed(() => page.props.flash?.success);
-const flashError = computed(() => page.props.flash?.error);
+const flashErrorRaw = computed(() => page.props.flash?.error);
+const flashError = computed(() => {
+    const v = flashErrorRaw.value;
+    if (v === 'read_only') return t('sub.readOnlyFlash');
+    if (v === 'clinic_suspended') return t('sub.suspendedFlash');
+    return v;
+});
+const sub = computed(() => page.props.auth?.subscription);
+const salesWa = computed(() => page.props.platform?.sales_whatsapp);
 
 const open = ref(false);
 const collapsed = ref(typeof localStorage !== 'undefined' && localStorage.getItem('nav_collapsed') === '1');
@@ -17,7 +25,7 @@ const toggleNav = () => { collapsed.value = !collapsed.value; localStorage.setIt
 const groups = computed(() => {
     const g = [
         { label: t('nav.groups.clinic'), items: [
-            { href: '/', label: t('nav.dashboard'), icon: 'dashboard', exact: true },
+            { href: '/dashboard', label: t('nav.dashboard'), icon: 'dashboard', exact: true },
             { href: '/patients', label: t('nav.patients'), icon: 'patients' },
             { href: '/appointments', label: t('nav.appointments'), icon: 'appointments' },
             { href: '/recalls', label: t('nav.recalls'), icon: 'clock' },
@@ -52,7 +60,7 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
         <aside class="fixed inset-y-0 z-30 flex w-72 flex-col border-e border-slate-200 bg-white shadow-xl transition-[transform,width] duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:shadow-none"
             :class="[open ? 'translate-x-0' : 'rtl:translate-x-full rtl:lg:translate-x-0', collapsed ? 'lg:w-[76px]' : 'lg:w-64']" style="inset-inline-start: 0">
             <div class="flex h-16 shrink-0 items-center justify-between gap-2 px-4" :class="collapsed ? 'lg:justify-center lg:px-0' : ''">
-                <Link href="/" class="flex min-w-0 items-center gap-3 text-lg font-bold text-ink-900" title="بسمة">
+                <Link href="/dashboard" class="flex min-w-0 items-center gap-3 text-lg font-bold text-ink-900" title="بسمة">
                     <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-700 text-white shadow">
                         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C9.5 2 8.8 3.4 7.2 3.4 5 3.4 3.5 5.6 3.5 8c0 3.6 1.7 4.7 2.1 7.4.3 2 .7 6.6 2.6 6.6 1.7 0 1.2-3.4 1.7-5.5.3-1.3.9-2 2.1-2s1.8.7 2.1 2c.5 2.1 0 5.5 1.7 5.5 1.9 0 2.3-4.6 2.6-6.6.4-2.7 2.1-3.8 2.1-7.4 0-2.4-1.5-4.6-3.7-4.6-1.6 0-2.3-1.4-4.8-1.4z"/></svg>
                     </span>
@@ -101,6 +109,13 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
                     <Link href="/patients/create" class="btn-primary btn-sm !py-2"><Icon name="plus" :size="15" /><span class="hidden sm:inline">{{ t('nav.newPatient') }}</span></Link>
                 </div>
             </header>
+            <div v-if="sub?.read_only" class="mx-4 mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm text-rose-900 lg:mx-8">
+                <span>{{ t('sub.readOnlyBanner') }}</span>
+                <a v-if="salesWa" :href="`https://wa.me/${salesWa}`" target="_blank" rel="noopener" class="font-bold underline">{{ t('sub.contactSales') }}</a>
+            </div>
+            <div v-else-if="sub?.status === 'trialing' && sub?.days_left !== null" class="mx-4 mt-4 rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-sm text-sky-900 lg:mx-8">
+                {{ t('sub.trialBanner', { days: sub.days_left }) }}
+            </div>
             <p v-if="flashError" class="mx-4 mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900 lg:mx-8">{{ flashError }}</p>
             <p v-if="flash" class="mx-4 mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-800">{{ flash }}</p>
             <main class="mx-auto w-full max-w-[1400px] flex-1 p-4 lg:p-8"><slot /></main>

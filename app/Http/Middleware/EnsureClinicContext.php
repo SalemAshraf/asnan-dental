@@ -12,6 +12,13 @@ class EnsureClinicContext
     {
         $user = $request->user();
 
+        if ($user !== null && $user->clinic?->suspended_at !== null) {
+            auth()->logout();
+            $request->session()?->invalidate();
+
+            return redirect()->route('login')->with('error', 'clinic_suspended');
+        }
+
         if ($user === null || ! $user->is_active) {
             auth()->logout();
             $request->session()?->invalidate();

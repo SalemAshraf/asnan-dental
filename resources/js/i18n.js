@@ -19,6 +19,11 @@ export const messages = {
         'nav.search': 'بحث سريع عن مريض بالاسم أو الهاتف…',
         'nav.collapse': 'طي القائمة',
         'nav.logout': 'تسجيل الخروج',
+        'sub.readOnlyBanner': 'انتهت الفترة التجريبية. الحساب الآن للاطلاع فقط: بياناتك محفوظة ويمكنك رؤيتها، لكن لا يمكن إضافة أو تعديل أي شيء حتى يتم التفعيل.',
+        'sub.contactSales': 'تواصل معنا للتفعيل',
+        'sub.trialBanner': 'الفترة التجريبية: متبقّي {days} يوم.',
+        'sub.readOnlyFlash': 'الحساب للاطلاع فقط حاليًا (انتهت الفترة التجريبية). لا يمكن حفظ التغييرات.',
+        'sub.suspendedFlash': 'هذا الحساب موقوف. تواصل مع الدعم.',
         'nav.menu': 'القائمة',
         'nav.close': 'إغلاق القائمة',
         'nav.newPatient': 'مريض جديد',
@@ -380,6 +385,11 @@ export const messages = {
         'dash.schedule.count': '{active} active of {total}',
         'dash.schedule.empty': 'No appointments today',
         'dash.schedule.emptyHint': 'Book one from the appointments page or the new patient button above.',
+        'sub.readOnlyBanner': 'The free trial has ended. This account is now read-only: your data is saved and visible, but nothing can be added or changed until activation.',
+        'sub.contactSales': 'Contact us to activate',
+        'sub.trialBanner': 'Free trial: {days} days left.',
+        'sub.readOnlyFlash': 'This account is currently read-only (the free trial ended). Changes cannot be saved.',
+        'sub.suspendedFlash': 'This account is suspended. Contact support.',
     },
 };
 

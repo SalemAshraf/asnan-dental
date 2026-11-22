@@ -15,6 +15,8 @@ class Clinic extends Model
         'invoice_prefix', 'phone', 'address',
     ];
 
+    protected $casts = ['suspended_at' => 'datetime'];
+
     public function branches(): HasMany
     {
         return $this->hasMany(Branch::class);
@@ -23,6 +25,17 @@ class Clinic extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function subscription(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    /** Read-only: view existing data, add or change nothing. Only an expired, unactivated trial does this; clinics without a subscription never do. */
+    public function isReadOnly(): bool
+    {
+        return (bool) $this->subscription?->trialExpired();
     }
 
     /** Allocate the next invoice number atomically (row lock). */

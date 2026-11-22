@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\EnsureClinicContext;
+use App\Http\Middleware\EnsureClinicWritable;
+use App\Http\Middleware\PlatformOnly;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RequireRole;
 use Illuminate\Foundation\Application;
@@ -20,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'clinic' => EnsureClinicContext::class,
             'role' => RequireRole::class,
+            'writable' => EnsureClinicWritable::class,
+            'platform' => PlatformOnly::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

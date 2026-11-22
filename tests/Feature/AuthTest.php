@@ -21,9 +21,9 @@ class AuthTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', ['email' => $user->email, 'password' => 'password'])
-            ->assertRedirect('/');
+            ->assertRedirect('/dashboard');
 
-        $this->get('/')->assertOk();
+        $this->get('/dashboard')->assertOk();
         $this->assertDatabaseHas('audit_logs', ['action' => 'login', 'user_id' => $user->id]);
     }
 
@@ -42,6 +42,6 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->create(['is_active' => false]);
 
-        $this->actingAs($user)->get('/')->assertRedirect('/login');
+        $this->actingAs($user)->get('/dashboard')->assertRedirect('/login');
     }
 }

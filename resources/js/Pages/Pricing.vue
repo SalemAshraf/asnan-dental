@@ -132,6 +132,12 @@ const features = (p) => (i18n.locale === 'ar' ? p.features_ar : p.features_en) |
             </div>
         </main>
 
-        <footer class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">{{ i18n.locale === 'ar' ? 'تقويم' : 'Taqwim' }}</footer>
+        <footer class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
+            <p>{{ i18n.locale === 'ar' ? 'تقويم' : 'Taqwim' }}</p>
+            <p class="mt-2 text-xs text-slate-400">
+                {{ i18n.locale === 'ar' ? 'تم تطوير هذا النظام بواسطة' : 'Built by' }}
+                <a href="https://wa.me/201098971853" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-700 hover:text-brand-800 hover:underline">Reviv Solutions</a>
+            </p>
+        </footer>
     </div>
 </template>

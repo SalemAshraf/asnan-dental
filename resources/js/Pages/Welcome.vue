@@ -7,7 +7,14 @@ defineProps({ canLogin: Boolean, canRegister: Boolean });
 
 const C = {
     ar: {
-        nav: [['#product', 'المنتج'], ['#flow', 'طريقة الشغل'], ['#team', 'الفريق'], ['#faq', 'أسئلة شائعة']],
+        nav: [['#product', 'المنتج'], ['#ai', 'Claude'], ['#flow', 'طريقة الشغل'], ['#team', 'الفريق'], ['#faq', 'أسئلة شائعة']],
+        aiH: 'اسأل Claude عن عيادتك',
+        aiS: 'اربط تقويم بحسابك في Claude واسأل بالعربي أو الإنجليزي عن مواعيدك ومتابعاتك وأرقامك، من غير ما تفتح لوحة التحكم.',
+        aiBadge: 'جديد — في البداية',
+        aiQ: ['مواعيد النهاردة وحالة كل واحدة إيه؟', 'أنهي متابعات متأخرة أو مستحقة النهاردة؟', 'دور على ملف المريض فلان برقمه', 'المحصل والمستحق الشهر ده كام؟'],
+        aiHow: [['فعّل الربط', 'مالك العيادة يفعّل ربط Claude من إعدادات العيادة.'], ['أضف الرابط في Claude', 'في Claude أضف Custom Connector برابط عيادتك ووافق من صفحة الموافقة.'], ['اسأل', 'اسأل عن الجدول والمتابعات والأرقام. تقدر تفصل الربط في أي وقت من الإعدادات.']],
+        aiTrust: ['قراءة فقط: لا يضيف ولا يعدّل ولا يرسل رسائل للمرضى', 'بدون بيانات سريرية: لا خطط علاج ولا تاريخ طبي ولا مخطط أسنان', 'الموافقة لمالك العيادة فقط، والوصول لبيانات عيادته فقط', 'يتوقف فورًا لو الربط اتقفل من الإعدادات أو اتفصل', 'البيانات تنتقل لحسابك في Claude تحت شروط استخدامك أنت معهم'],
+        aiNote: 'الربط جديد واتجرّب على حساب واحد لحد الآن، ويتطلب حساب Claude منفصل بخططه الخاصة. مفيش مساعد ذكاء اصطناعي داخل تقويم نفسه.',
         eyebrow: 'نظام إدارة عيادات الأسنان',
         h1: 'من أول حجز لحد تحصيل الفاتورة، كل شغل العيادة في مكان واحد',
         lead: 'ملفات مرضى وخطط علاج وفواتير ومدفوعات ومتابعات، مع تقارير توريك أرقام عيادتك. بالعربي والإنجليزي، ومن الموبايل كمان.',
@@ -27,13 +34,20 @@ const C = {
         team: [['مالك العيادة', 'يشوف كل شيء، يضيف الفريق والفروع، ويضبط الأسعار والإعدادات.'], ['طبيب الأسنان', 'ملفات المرضى وخطط العلاج ومخطط الأسنان والمواعيد.'], ['موظف الاستقبال', 'الحجز والفواتير والمدفوعات والمتابعات، بدون تعديل البيانات السريرية.']],
         teamNote: 'سجل مراجعة بالتعديلات المهمة، وبيانات كل عيادة منفصلة تمامًا عن أي عيادة تانية.',
         mH: 'بالعربي والإنجليزي، وعلى الموبايل', mP: 'الواجهة بتتبدل بين العربية (من اليمين لليسار) والإنجليزية بضغطة واحدة لكل مستخدم، وبتشتغل من متصفح الموبايل.',
-        nH: 'مش موجود لسه', nP: 'علشان الصورة تبقى واضحة: الإرسال التلقائي لرسائل واتساب، الرسائل النصية والإيميلات، الدفع أونلاين، مطالبات التأمين، والتطبيق الأصلي للموبايل لسه ما اتبنوش. زر واتساب بيفتح محادثة جاهزة على جهازك ولا يرسل بنفسه.',
+        nH: 'مش موجود لسه', nP: 'علشان الصورة تبقى واضحة: الإرسال التلقائي لرسائل واتساب، الرسائل النصية والإيميلات، الدفع أونلاين، مطالبات التأمين، التطبيق الأصلي للموبايل، ومساعد ذكاء اصطناعي داخل النظام نفسه لسه ما اتبنوش. زر واتساب بيفتح محادثة جاهزة على جهازك ولا يرسل بنفسه.',
         qH: 'أسئلة شائعة',
         faq: [['هل بيانات عيادتي بتظهر لعيادات تانية؟', 'لا. كل حساب عيادة له بياناته المنفصلة. التسجيل بينشئ عيادة جديدة فقط، ولا يضيفك لعيادة موجودة. الانضمام يتم بإضافة من مالك العيادة.'], ['هل النظام بيبعت رسائل واتساب للمرضى؟', 'لا حاليًا. زر واتساب بيفتح محادثة في واتساب على جهازك برسالة جاهزة تبعتها أنت، من غير أي تفاصيل سريرية. الإرسال التلقائي مش متاح لسه.'], ['هل في تطبيق موبايل؟', 'النظام بيشتغل كامل من متصفح الموبايل. التطبيق الأصلي لأندرويد وiOS مش موجود لسه.'], ['كام السعر؟', 'السعر والباقات لسه ما اتحددوش، فمفيش أرقام هنا.'], ['هل إنشاء الحساب مجاني؟', 'أيوه. أنشئ حسابك من غير أي وسيلة دفع، وفريقنا بيفعّل الحساب يدويًا بعد التواصل. حتى التفعيل، الحساب للاطلاع فقط: بياناتك محفوظة وتقدر تشوفها، لكن لا يمكن إضافة أو تعديل أي شيء.'], ['أقدر أجرّب قبل ما أدخل بياناتي؟', 'تقدر تنشئ حساب عيادة جديد وتجرّب. بياناتك التجريبية بتفضل منفصلة عن أي عيادة تانية.']],
         fin: 'جاهز تبدأ؟', finP: 'أنشئ حساب عيادتك وابدأ بإضافة الفريق والمرضى.', foot: 'تقويم', login: 'تسجيل الدخول', register: 'إنشاء حساب', plans: 'الباقات',
     },
     en: {
-        nav: [['#product', 'Product'], ['#flow', 'How it works'], ['#team', 'Team'], ['#faq', 'FAQ']],
+        nav: [['#product', 'Product'], ['#ai', 'Claude'], ['#flow', 'How it works'], ['#team', 'Team'], ['#faq', 'FAQ']],
+        aiH: 'Ask Claude about your clinic',
+        aiS: 'Connect Taqwim to your Claude account and ask, in Arabic or English, about your schedule, recalls and numbers, without opening the dashboard.',
+        aiBadge: 'New, early',
+        aiQ: ["What are today's appointments and their status?", 'Which recalls are due or overdue today?', "Find a patient's file by phone", 'How much was collected and is outstanding this month?'],
+        aiHow: [['Turn it on', 'The clinic owner enables the Claude connection in clinic settings.'], ['Add the connector in Claude', 'In Claude, add a Custom Connector with your clinic URL and approve on the consent page.'], ['Ask', 'Ask about the schedule, recalls and numbers. Disconnect any time from settings.']],
+        aiTrust: ['Read-only: it cannot add, change or message patients', 'No clinical data: no treatment plans, medical history or odontogram', "Only the clinic owner approves, and only their clinic's data is exposed", 'It stops the moment the switch is off or the connection is removed', 'Data goes to your own Claude account under your terms with them'],
+        aiNote: 'The connector is new and has been tried on one account so far, and needs a separate Claude account under its own plans. There is no AI assistant inside Taqwim itself.',
         eyebrow: 'Dental clinic management',
         h1: 'From the first booking to the paid invoice, your whole clinic in one place',
         lead: 'Patient files, treatment plans, invoices and payments, recalls, and reports that show your clinic\u2019s real numbers. In Arabic and English, and on your phone too.',
@@ -53,7 +67,7 @@ const C = {
         team: [['Clinic owner', 'Sees everything, adds the team and branches, and sets prices and settings.'], ['Dentist', 'Patient files, treatment plans, the odontogram and appointments.'], ['Receptionist', 'Booking, invoices, payments and recalls, without editing clinical data.']],
         teamNote: 'An audit log of important changes, and each clinic\u2019s data fully separate from every other clinic.',
         mH: 'Arabic, English and mobile', mP: 'Each user switches between Arabic (right to left) and English in one tap, and everything works from a phone browser.',
-        nH: 'Not available yet', nP: 'To be clear: automatic WhatsApp sending, SMS and email, online payment, insurance claims and a native mobile app are not built yet. The WhatsApp button opens a ready chat on your device; it does not send by itself.',
+        nH: 'Not available yet', nP: 'To be clear: automatic WhatsApp sending, SMS and email, online payment, insurance claims, a native mobile app and an AI assistant inside the product itself are not built yet. The WhatsApp button opens a ready chat on your device; it does not send by itself.',
         qH: 'Frequently asked questions',
         faq: [['Can other clinics see my data?', 'No. Each clinic account has its own separate data. Signing up only creates a new clinic; it never adds you to an existing one. Joining happens when the clinic owner adds you.'], ['Does it send WhatsApp messages to patients?', 'Not today. The WhatsApp button opens a chat on your device with a ready message you send yourself, with no clinical details. Automatic sending is not available yet.'], ['Is there a mobile app?', 'The system works fully from a phone browser. A native Android or iOS app does not exist yet.'], ['How much does it cost?', 'Pricing and plans are not set yet, so there are no numbers here.'], ['Is creating an account free?', 'Yes. Create your account with no payment method, and our team activates it manually after getting in touch. Until activation the account is read-only: your data stays saved and visible, but nothing can be added or changed.'], ['Can I try it before entering my data?', 'You can create a new clinic account and try it. Your trial data stays separate from every other clinic.']],
         fin: 'Ready to start?', finP: 'Create your clinic account and start by adding your team and patients.', foot: 'Taqwim', login: 'Log in', register: 'Create account', plans: 'Plans',
@@ -122,6 +136,37 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
                     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl lg:col-span-3">
                         <img :src="img(c.tabs[tab][0])" width="1280" height="800" alt="" class="block w-full" loading="lazy" />
                     </div>
+                </div>
+            </section>
+
+            <section id="ai" class="relative overflow-hidden border-y border-slate-200 bg-slate-900 py-16 text-white">
+                <div class="pointer-events-none absolute inset-0" style="background: radial-gradient(40rem 20rem at 80% -10%, rgba(23, 122, 117, 0.35), transparent 60%), radial-gradient(30rem 18rem at 0% 110%, rgba(16, 78, 76, 0.45), transparent 60%);" />
+                <div class="relative mx-auto max-w-6xl px-5">
+                    <div class="text-center">
+                        <span class="inline-block rounded-full bg-brand-500/20 px-3 py-1 text-xs font-bold text-brand-200 ring-1 ring-brand-400/40">{{ c.aiBadge }}</span>
+                        <h2 class="mt-3 text-3xl font-bold">{{ c.aiH }}</h2>
+                        <p class="mx-auto mt-2 max-w-2xl text-slate-300">{{ c.aiS }}</p>
+                    </div>
+                    <div class="mt-10 grid items-start gap-8 lg:grid-cols-2">
+                        <div class="space-y-3">
+                            <div v-for="q in c.aiQ" :key="q" class="rounded-2xl rounded-ss-md border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-slate-100 shadow-sm">
+                                <span class="me-2 inline-block h-2 w-2 rounded-full bg-brand-400 align-middle" />{{ q }}
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div v-for="(h, i) in c.aiHow" :key="h[0]" class="flex items-start gap-3">
+                                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-500/20 text-sm font-bold text-brand-200 ring-1 ring-brand-400/40">{{ i + 1 }}</span>
+                                <div>
+                                    <h3 class="font-bold">{{ h[0] }}</h3>
+                                    <p class="mt-1 text-sm leading-6 text-slate-300">{{ h[1] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="mt-10 grid gap-3 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm leading-6 text-slate-200 sm:grid-cols-2">
+                        <li v-for="tr in c.aiTrust" :key="tr" class="flex items-start gap-2"><svg class="mt-0.5 h-4 w-4 shrink-0 text-brand-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.6l7.3-7.3a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>{{ tr }}</li>
+                    </ul>
+                    <p class="mt-5 text-center text-xs leading-5 text-slate-400">{{ c.aiNote }}</p>
                 </div>
             </section>
 

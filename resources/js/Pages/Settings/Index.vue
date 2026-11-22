@@ -2,9 +2,12 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Badge from '@/Components/Badge.vue';
 import { useForm } from '@inertiajs/vue3';
-import { t } from '@/i18n';
+import { i18n, t } from '@/i18n';
 
-const props = defineProps({ clinic: Object, branches: Array, users: Array, roles: Array, setupDismissed: Boolean, bookingEnabled: Boolean, bookingUrl: String });
+const props = defineProps({ clinic: Object, branches: Array, users: Array, roles: Array, setupDismissed: Boolean, bookingEnabled: Boolean, bookingUrl: String, ai: Object });
+const aiForm = useForm({ enabled: props.ai?.enabled ?? false });
+const revoke = (family) => useForm({}).delete(`/settings/ai-connections/${family}`, { preserveScroll: true });
+const fmt = (d) => d ? new Date(d).toLocaleDateString(i18n.locale === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : t('set.aiNever');
 const guideForm = useForm({});
 const showGuide = () => guideForm.post('/setup-guide/show', { preserveScroll: true });
 
@@ -58,6 +61,37 @@ const toggle = (id) => useForm({}).post(`/settings/users/${id}/toggle`, { preser
             <div v-if="clinicForm.booking_enabled && bookingUrl" class="mt-3 flex flex-wrap items-center gap-2 rounded-lg bg-slate-50 p-3 text-sm">
                 <a :href="bookingUrl" target="_blank" rel="noopener" class="break-all font-medium text-brand-700 hover:underline" dir="ltr">{{ bookingUrl }}</a>
             </div>
+        </div>
+
+        <div class="card mb-4">
+            <h2 class="mb-1 font-bold text-ink-900">{{ t('set.ai') }}</h2>
+            <p class="mb-3 text-xs leading-5 text-slate-500">{{ t('set.aiHint') }}</p>
+            <label class="flex items-center gap-2 text-sm">
+                <input v-model="aiForm.enabled" type="checkbox" @change="aiForm.patch('/settings/ai', { preserveScroll: true })">
+                {{ t('set.aiToggle') }}
+            </label>
+            <div v-if="aiForm.enabled" class="mt-3 rounded-lg bg-slate-50 p-3 text-sm">
+                <p class="mb-1 text-xs text-slate-500">{{ t('set.aiHow') }}</p>
+                <code class="break-all font-medium text-brand-700" dir="ltr">{{ ai.url }}</code>
+            </div>
+            <div v-if="ai.connections?.length" class="mt-3 overflow-x-auto">
+                <p class="mb-1 text-xs font-semibold text-slate-500">{{ t('set.aiConnections') }}</p>
+                <table class="w-full min-w-[420px] text-sm">
+                    <thead class="border-b border-slate-200">
+                        <tr><th class="th !px-0">{{ t('set.aiApp') }}</th><th class="th">{{ t('set.aiUser') }}</th><th class="th">{{ t('set.aiSince') }}</th><th class="th">{{ t('set.aiLast') }}</th><th class="th !px-0"></th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr v-for="x in ai.connections" :key="x.family">
+                            <td class="td !px-0 font-medium text-ink-900">{{ x.app }}</td>
+                            <td class="td text-slate-600">{{ x.user }}</td>
+                            <td class="td tabular-nums text-slate-500">{{ fmt(x.created_at) }}</td>
+                            <td class="td tabular-nums text-slate-500">{{ fmt(x.last_used_at) }}</td>
+                            <td class="td !px-0 text-end"><button class="btn-secondary btn-sm" @click="revoke(x.family)">{{ t('set.aiRevoke') }}</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p v-else class="mt-3 text-xs text-slate-400">{{ t('set.aiNone') }}</p>
         </div>
 
         <div class="card mb-4">

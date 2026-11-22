@@ -53,6 +53,20 @@ Route::prefix('platform')->name('platform.')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
+// Read-only AI connector (Claude): OAuth 2.1 + MCP. Public metadata/registration/token endpoints; consent requires a signed-in user.
+Route::get('/.well-known/oauth-protected-resource/{any?}', [\App\Http\Controllers\OauthController::class, 'resourceMetadata'])->where('any', '.*');
+Route::get('/.well-known/oauth-authorization-server/{any?}', [\App\Http\Controllers\OauthController::class, 'serverMetadata'])->where('any', '.*');
+Route::post('/oauth/register', [\App\Http\Controllers\OauthController::class, 'register'])->middleware('throttle:20,1');
+Route::post('/oauth/token', [\App\Http\Controllers\OauthController::class, 'token'])->middleware('throttle:60,1');
+Route::post('/oauth/revoke', [\App\Http\Controllers\OauthController::class, 'revoke'])->middleware('throttle:60,1');
+Route::post('/mcp', [\App\Http\Controllers\McpController::class, 'handle'])->middleware('throttle:60,1')->name('mcp');
+Route::middleware(['auth', 'clinic'])->group(function () {
+    Route::get('/oauth/authorize', [\App\Http\Controllers\OauthController::class, 'authorizeForm'])->name('oauth.authorize');
+    Route::post('/oauth/authorize', [\App\Http\Controllers\OauthController::class, 'decide'])->name('oauth.decide');
+    // Revoking access is always allowed, including for a read-only (pending activation) clinic.
+    Route::delete('/settings/ai-connections/{family}', [SettingsController::class, 'aiConnectionRevoke'])->name('settings.ai.disconnect');
+});
+
 Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
@@ -95,6 +109,7 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::post('settings/branches', [SettingsController::class, 'storeBranch'])->name('settings.branches.store');
     Route::post('settings/users', [SettingsController::class, 'storeUser'])->name('settings.users.store');
     Route::post('settings/users/{user}/toggle', [SettingsController::class, 'toggleUser'])->name('settings.users.toggle');
+    Route::patch('settings/ai', [SettingsController::class, 'aiToggle'])->name('settings.ai');
 
     Route::get('audit-log', [AuditLogController::class, 'index'])->name('audit.index');
 });

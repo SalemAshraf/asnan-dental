@@ -15,7 +15,7 @@ class Clinic extends Model
         'invoice_prefix', 'phone', 'address', 'booking_enabled',
     ];
 
-    protected $casts = ['suspended_at' => 'datetime', 'setup_dismissed_at' => 'datetime', 'booking_enabled' => 'boolean'];
+    protected $casts = ['suspended_at' => 'datetime', 'setup_dismissed_at' => 'datetime', 'booking_enabled' => 'boolean', 'ai_enabled' => 'boolean'];
 
     public function branches(): HasMany
     {

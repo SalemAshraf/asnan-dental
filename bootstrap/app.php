@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'writable' => EnsureClinicWritable::class,
             'platform' => PlatformOnly::class,
         ]);
+        $middleware->validateCsrfTokens(except: ['mcp', 'oauth/token', 'oauth/register', 'oauth/revoke']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -23,7 +23,30 @@ class SettingsController extends Controller
             'setupDismissed' => $request->user()->clinic?->setup_dismissed_at !== null,
             'bookingEnabled' => (bool) $request->user()->clinic?->booking_enabled,
             'bookingUrl' => $request->user()->clinic?->booking_token ? url('/b/'.$request->user()->clinic->booking_token) : null,
+            'ai' => ['enabled' => (bool) $request->user()->clinic?->ai_enabled, 'url' => url('/mcp'),
+                'connections' => \App\Models\OauthToken::where('clinic_id', $request->user()->clinic_id)->whereNull('revoked_at')->whereNull('rotated_at')->where('refresh_expires_at', '>', now())->with('user:id,name')->orderByDesc('id')
+                    ->get(['id', 'family', 'client_id', 'user_id', 'last_used_at', 'created_at'])->map(fn ($t) => ['family' => $t->family, 'app' => \App\Models\OauthClient::where('client_id', $t->client_id)->value('name') ?: 'AI app', 'user' => $t->user?->name, 'last_used_at' => $t->last_used_at, 'created_at' => $t->created_at])],
         ]);
+    }
+
+    public function aiToggle(Request $request)
+    {
+        abort_unless($request->user()->isOwner(), 403);
+        $d = $request->validate(['enabled' => ['required', 'boolean']]);
+        $clinic = $request->user()->clinic;
+        $clinic->forceFill(['ai_enabled' => $d['enabled']])->save();
+        \App\Models\AuditLog::create(['clinic_id' => $clinic->id, 'user_id' => $request->user()->id, 'action' => $d['enabled'] ? 'settings.ai_on' : 'settings.ai_off', 'changes' => null, 'ip' => $request->ip(), 'user_agent' => substr((string) $request->userAgent(), 0, 255)]);
+
+        return back();
+    }
+
+    /** Disconnect one AI connection (whole token family). Allowed even for a read-only clinic: revoking must never be blocked. */
+    public function aiConnectionRevoke(Request $request, string $family)
+    {
+        abort_unless($request->user()->isOwner(), 403);
+        \App\Models\OauthToken::where('clinic_id', $request->user()->clinic_id)->where('family', $family)->update(['revoked_at' => now()]);
+
+        return back();
     }
 
     public function updateClinic(Request $request)

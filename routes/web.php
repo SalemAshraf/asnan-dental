@@ -99,6 +99,11 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::put('lab-cases/{labCase}', [\App\Http\Controllers\LabCaseController::class, 'update'])->name('lab.update');
     Route::post('lab-cases/{labCase}/transition', [\App\Http\Controllers\LabCaseController::class, 'transition'])->name('lab.transition');
     Route::delete('lab-cases/{labCase}', [\App\Http\Controllers\LabCaseController::class, 'destroy'])->name('lab.destroy');
+    Route::get('inventory', [\App\Http\Controllers\InventoryController::class, 'index'])->name('inventory.index');
+    Route::post('inventory/items', [\App\Http\Controllers\InventoryController::class, 'storeItem'])->name('inventory.items.store');
+    Route::post('inventory/movements', [\App\Http\Controllers\InventoryController::class, 'storeMovement'])->name('inventory.movements.store');
+    Route::post('inventory/rules', [\App\Http\Controllers\InventoryController::class, 'storeRule'])->name('inventory.rules.store');
+    Route::delete('inventory/rules/{serviceSupply}', [\App\Http\Controllers\InventoryController::class, 'destroyRule'])->name('inventory.rules.destroy');
 
     Route::get('reports', \App\Http\Controllers\ReportController::class)->name('reports');
     Route::get('reports/export', [\App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');

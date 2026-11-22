@@ -84,7 +84,11 @@ class TreatmentPlanController extends Controller
             'status' => ['sometimes', Rule::in(TreatmentPlanItem::STATUSES)],
         ]);
 
+        $wasCompleted = $item->status === 'completed';
         $item->update($data);
+        if (! $wasCompleted && $item->status === 'completed') {
+            \App\Support\InventoryDeduction::deductForPlanItem($item, $request->user()->id);
+        }
         $item->plan->recalcTotal();
 
         return back();

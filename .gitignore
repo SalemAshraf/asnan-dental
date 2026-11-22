@@ -29,3 +29,10 @@ vendor/
 AGENTS.md
 CLAUDE.md
 .env.dev
+
+# Flutter companion app
+mobile/.dart_tool/
+mobile/build/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/.idea/

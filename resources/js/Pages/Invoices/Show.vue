@@ -13,6 +13,8 @@ const addPayment = () => pay.post(`/invoices/${props.invoice.id}/payments`, { pr
 const issue = () => router.post(`/invoices/${props.invoice.id}/issue`);
 const voidIt = () => confirm('إلغاء الفاتورة؟') && router.post(`/invoices/${props.invoice.id}/void`);
 const money = (v) => fmt(v, props.invoice.currency);
+const paidPct = Math.min(100, props.invoice.total_minor ? Math.round(props.invoice.paid_minor / props.invoice.total_minor * 100) : 0);
+const fillRemaining = () => { pay.amount = ((props.invoice.total_minor - props.invoice.paid_minor) / 100).toFixed(2); };
 </script>
 
 <template>
@@ -47,6 +49,12 @@ const money = (v) => fmt(v, props.invoice.currency);
                     <div class="flex justify-between border-t border-slate-100 pt-2 text-base font-bold text-ink-900"><span>الإجمالي</span><span class="tabular-nums">{{ money(invoice.total_minor) }}</span></div>
                     <div class="flex justify-between text-emerald-700"><span>المدفوع</span><span class="tabular-nums">{{ money(invoice.paid_minor) }}</span></div>
                     <div class="flex justify-between font-bold text-rose-700"><span>المتبقي</span><span class="tabular-nums">{{ money(invoice.total_minor - invoice.paid_minor) }}</span></div>
+                    <div class="pt-1" :title="'نسبة السداد ' + paidPct + '%'">
+                        <div class="h-2 overflow-hidden rounded-full bg-slate-100">
+                            <div class="h-full rounded-full transition-all" :class="paidPct >= 100 ? 'bg-emerald-500' : 'bg-brand-600'" :style="{ width: paidPct + '%' }" />
+                        </div>
+                        <p class="mt-1 text-xs text-slate-400">سُدد {{ paidPct }}% من قيمة الفاتورة</p>
+                    </div>
                 </div>
             </div>
 
@@ -63,6 +71,7 @@ const money = (v) => fmt(v, props.invoice.currency);
                         <option v-for="m in paymentMethods" :key="m" :value="m">{{ methodAr[m] }}</option>
                     </select>
                     <input v-model="pay.reference" placeholder="مرجع (اختياري)" class="input flex-1">
+                    <button type="button" @click="fillRemaining" class="btn-secondary">سداد كامل المتبقي ({{ money(invoice.total_minor - invoice.paid_minor) }})</button>
                     <button class="btn-primary">تسجيل</button>
                     <p v-if="pay.errors.amount_minor" class="w-full text-xs text-rose-600">{{ pay.errors.amount_minor }}</p>
                 </form>

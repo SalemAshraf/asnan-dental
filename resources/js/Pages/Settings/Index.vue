@@ -9,6 +9,7 @@ const roleAr = { owner: 'مالك', dentist: 'طبيب', receptionist: 'استق
 const clinicForm = useForm({
     name: props.clinic.name, phone: props.clinic.phone ?? '', address: props.clinic.address ?? '',
     tax_rate_bp: props.clinic.tax_rate_bp, invoice_prefix: props.clinic.invoice_prefix,
+    timezone: props.clinic.timezone ?? 'Africa/Cairo', currency: props.clinic.currency ?? 'EGP',
 });
 const branchForm = useForm({ name: '', address: '', phone: '' });
 const userForm = useForm({ name: '', email: '', phone: '', role: 'dentist', branch_id: '', password: '' });
@@ -30,6 +31,12 @@ const toggle = (id) => useForm({}).post(`/settings/users/${id}/toggle`, { preser
                 <input v-model="clinicForm.tax_rate_bp" type="number" min="0" max="10000" class="input" dir="ltr"></div>
             <div><label class="label">بادئة الفواتير</label>
                 <input v-model="clinicForm.invoice_prefix" class="input" dir="ltr"></div>
+            <div><label class="label">المنطقة الزمنية (تؤثر على المواعيد والتقارير)</label>
+                <select v-model="clinicForm.timezone" class="input" dir="ltr">
+                    <option v-for="tz in ['Africa/Cairo','Africa/Khartoum','Asia/Riyadh','Asia/Jeddah','Asia/Dubai','Asia/Kuwait','Asia/Qatar','Asia/Bahrain','Asia/Muscat','Asia/Amman','Asia/Beirut','Africa/Casablanca','Africa/Tunis','Europe/Istanbul','UTC']" :key="tz" :value="tz">{{ tz }}</option>
+                </select></div>
+            <div><label class="label">العملة (رمز ISO من 3 أحرف)</label>
+                <input v-model="clinicForm.currency" class="input" dir="ltr" maxlength="3"></div>
             <div class="self-end"><button class="btn-primary">حفظ</button></div>
         </form>
 

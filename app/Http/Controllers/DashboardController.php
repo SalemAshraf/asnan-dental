@@ -83,8 +83,13 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'stats' => [
-                'today_appointments' => Appointment::whereBetween('starts_at', [$todayStart, $todayEnd])
+                // All of today's appointments; the hint breaks down active vs finished
+                // so the number always matches the visible schedule list.
+                'today_appointments' => Appointment::whereBetween('starts_at', [$todayStart, $todayEnd])->count(),
+                'today_active' => Appointment::whereBetween('starts_at', [$todayStart, $todayEnd])
                     ->whereIn('status', Appointment::ACTIVE_STATUSES)->count(),
+                'today_done' => Appointment::whereBetween('starts_at', [$todayStart, $todayEnd])
+                    ->where('status', 'completed')->count(),
                 'week_appointments' => Appointment::whereBetween('starts_at', [$todayStart, $now->copy()->addDays(7)->endOfDay()->utc()])
                     ->whereIn('status', Appointment::ACTIVE_STATUSES)->count(),
                 'patients_total' => Patient::count(),

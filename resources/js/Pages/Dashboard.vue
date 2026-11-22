@@ -28,7 +28,7 @@ const time = (d) => new Date(d).toLocaleTimeString('ar-EG', { hour: '2-digit', m
 
         <div class="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
             <Kpi label="مواعيد اليوم" :value="stats.today_appointments" icon="appointments"
-                :hint="stats.week_appointments + ' خلال ٧ أيام'" :series="apptSeries" />
+                :hint="stats.today_active + ' نشطة · ' + stats.today_done + ' تمت · ' + stats.week_appointments + ' خلال ٧ أيام'" :series="apptSeries" />
             <Kpi label="محصل هذا الشهر" :value="money(stats.collected_month_minor)" icon="cash" tone="good" :series="collectedSeries" />
             <Kpi label="مستحقات متبقية" :value="money(stats.outstanding_minor)" icon="invoices"
                 :tone="stats.outstanding_minor > 0 ? 'bad' : 'slate'" hint="فواتير صادرة غير مسددة" />

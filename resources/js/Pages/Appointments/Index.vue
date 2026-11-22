@@ -88,6 +88,7 @@ const setView = (v) => router.get('/appointments', { day: props.day, view: v });
                     </button>
                     <div class="space-y-1.5">
                         <button v-for="a in d.appointments" :key="a.id" @click="goDay(d.date)"
+                            :title="time(a.starts_at) + ' — ' + (a.patient?.full_name ?? '') + ' — ' + (a.dentist?.name ?? '')"
                             class="block w-full truncate rounded-lg border px-2 py-1.5 text-start text-[11px] leading-tight transition hover:shadow-sm"
                             :class="['cancelled','no_show'].includes(a.status) ? 'border-slate-200 bg-slate-50 text-slate-400' : 'border-brand-200 bg-brand-50 text-ink-900'">
                             <span class="block font-bold tabular-nums" dir="ltr">{{ time(a.starts_at) }}</span>
@@ -105,11 +106,11 @@ const setView = (v) => router.get('/appointments', { day: props.day, view: v });
                 <div v-for="a in appointments" :key="a.id" class="flex flex-wrap items-center gap-3 py-3 text-sm">
                     <span class="grid w-24 shrink-0 place-items-center rounded-lg bg-brand-50 py-1.5 text-xs font-bold tabular-nums text-brand-800" dir="ltr">{{ time(a.starts_at) }} – {{ time(a.ends_at) }}</span>
                     <span class="min-w-0 flex-1">
-                        <span class="block truncate font-semibold text-ink-900">{{ a.patient?.full_name }}</span>
+                        <span class="block font-semibold text-ink-900 sm:truncate">{{ a.patient?.full_name }}</span>
                         <span class="text-xs text-slate-500">{{ a.dentist?.name }}<span v-if="a.chair"> · {{ a.chair }}</span></span>
                     </span>
-                    <StatusBadge :value="a.status" />
-                    <select v-if="['scheduled','confirmed','checked_in'].includes(a.status)" :value="a.status"
+                    <StatusBadge v-if="!['scheduled','confirmed','checked_in'].includes(a.status)" :value="a.status" />
+                    <select v-else :value="a.status"
                         @change="setStatus(a.id, $event.target.value)" class="input !w-auto !px-2 !py-1 text-xs">
                         <option v-for="s in ['scheduled','confirmed','checked_in','completed','cancelled','no_show']" :key="s" :value="s">{{ { scheduled: 'مجدول', confirmed: 'مؤكد', checked_in: 'وصل', completed: 'تم', cancelled: 'ملغي', no_show: 'لم يحضر' }[s] }}</option>
                     </select>

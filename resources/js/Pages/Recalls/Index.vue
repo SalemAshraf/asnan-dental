@@ -51,7 +51,7 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h1 class="text-2xl font-bold text-ink-900">تذكيرات المتابعة</h1>
-                <p class="text-sm text-slate-500">مرضى محتاجين رجوع للعيادة — التواصل يدوي عبر واتساب المريض</p>
+                <p class="text-sm text-slate-500">مرضى محتاجين رجوع للعيادة. زر واتساب يفتح محادثة على جهازك برسالة تذكير جاهزة ترسلها بنفسك — لا يُرسل أي شيء تلقائيًا، والرسالة لا تحتوي تفاصيل علاجية.</p>
             </div>
             <button @click="showForm = !showForm" class="btn-primary"><Icon name="plus" :size="16" /> تذكير جديد</button>
         </div>
@@ -82,7 +82,7 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
                         <span class="block truncate font-semibold text-ink-900">{{ r.patient?.full_name }} <span class="font-normal text-slate-400">#{{ r.patient?.file_no }}</span></span>
                         <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || 'متابعة' }} · كان مستحقًا <span class="tabular-nums" dir="ltr">{{ dstr(r.due_date) }}</span></span>
                     </span>
-                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm"><Icon name="whatsapp" :size="15" /> واتساب</a>
+                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm" title="يفتح محادثة واتساب برسالة جاهزة — الإرسال يدوي من جهازك"><Icon name="whatsapp" :size="15" /> واتساب</a>
                     <button @click="setStatus(r.id, 'done')" class="btn-primary btn-sm">تم التواصل/الحجز</button>
                     <button @click="setStatus(r.id, 'cancelled')" class="btn-secondary btn-sm">إلغاء</button>
                 </div>
@@ -99,7 +99,7 @@ const upcoming = computed(() => props.pending.filter((r) => !r.overdue));
                         <span class="block truncate font-semibold text-ink-900">{{ r.patient?.full_name }}</span>
                         <span class="text-xs text-slate-500">{{ r.reason || r.service?.name_ar || 'متابعة' }}</span>
                     </span>
-                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm"><Icon name="whatsapp" :size="15" /> واتساب</a>
+                    <a v-if="waLink(r)" :href="waLink(r)" target="_blank" rel="noopener" class="btn-secondary btn-sm" title="يفتح محادثة واتساب برسالة جاهزة — الإرسال يدوي من جهازك"><Icon name="whatsapp" :size="15" /> واتساب</a>
                     <button @click="setStatus(r.id, 'done')" class="btn-primary btn-sm">تم</button>
                     <button @click="setStatus(r.id, 'cancelled')" class="btn-secondary btn-sm">إلغاء</button>
                 </div>

@@ -33,7 +33,11 @@ class SettingsController extends Controller
             'address' => ['nullable', 'string', 'max:255'],
             'tax_rate_bp' => ['required', 'integer', 'min:0', 'max:10000'],
             'invoice_prefix' => ['required', 'string', 'max:10', 'alpha_dash'],
+            'timezone' => ['required', 'string', Rule::in(\DateTimeZone::listIdentifiers())],
+            'currency' => ['required', 'string', 'size:3', 'alpha'],
         ]);
+
+        $data['currency'] = strtoupper($data['currency']);
 
         $request->user()->clinic->update($data);
 

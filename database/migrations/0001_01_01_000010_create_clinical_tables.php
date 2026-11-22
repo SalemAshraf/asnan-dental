@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('type', 30); // data_processing|treatment|marketing
             $table->text('text_snapshot');
             $table->string('method', 20); // verbal_logged|written|digital
-            $table->timestamp('given_at');
+            $table->dateTime('given_at');
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
@@ -60,8 +60,8 @@ return new class extends Migration
             $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
             $table->foreignId('dentist_id')->constrained('users')->cascadeOnDelete();
             $table->string('chair', 32)->nullable();
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at');
+            $table->dateTime('starts_at');
+            $table->dateTime('ends_at');
             $table->string('status', 20)->default('scheduled');
             $table->string('reason')->nullable();
             $table->text('notes')->nullable();

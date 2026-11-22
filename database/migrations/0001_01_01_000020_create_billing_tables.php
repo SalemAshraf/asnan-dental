@@ -51,7 +51,7 @@ return new class extends Migration
             $table->bigInteger('amount_minor');
             $table->string('method', 20); // cash|card|instapay|bank_transfer|wallet
             $table->string('reference')->nullable();
-            $table->timestamp('paid_at');
+            $table->dateTime('paid_at');
             $table->foreignId('received_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();

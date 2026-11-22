@@ -18,11 +18,12 @@ use App\Models\TreatmentPlanItem;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 /**
  * Synthetic development data only. No real patient information: every name,
  * phone number and record below is fictional and generated for demos.
- * Local login (dev only): owner@asnan.test / password
+ * Local login (dev only): owner@asnan.test / password (or DEMO_PASSWORD when set)
  */
 class DatabaseSeeder extends Seeder
 {
@@ -45,20 +46,28 @@ class DatabaseSeeder extends Seeder
             'address' => '١٢ شارع التحرير، القاهرة',
         ]);
 
+        // Demo logins share one password. Outside local env it MUST come from
+        // DEMO_PASSWORD so a public repo never ships a reusable credential;
+        // choose it per deployment and store it in a password manager.
+        $demoPassword = env('DEMO_PASSWORD') ?: (app()->environment('local') ? 'password' : null);
+        if (! $demoPassword) {
+            throw new RuntimeException('Set DEMO_PASSWORD in the environment before seeding demo users outside local.');
+        }
+
         $owner = User::create([
             'clinic_id' => $clinic->id, 'branch_id' => $branch->id,
             'name' => 'د. مالك العيادة', 'email' => 'owner@asnan.test',
-            'password' => 'password', 'role' => User::ROLE_OWNER,
+            'password' => $demoPassword, 'role' => User::ROLE_OWNER,
         ]);
         $dentist = User::create([
             'clinic_id' => $clinic->id, 'branch_id' => $branch->id,
             'name' => 'د. طبيب أسنان', 'email' => 'dentist@asnan.test',
-            'password' => 'password', 'role' => User::ROLE_DENTIST,
+            'password' => $demoPassword, 'role' => User::ROLE_DENTIST,
         ]);
         User::create([
             'clinic_id' => $clinic->id, 'branch_id' => $branch->id,
             'name' => 'موظفة الاستقبال', 'email' => 'reception@asnan.test',
-            'password' => 'password', 'role' => User::ROLE_RECEPTIONIST,
+            'password' => $demoPassword, 'role' => User::ROLE_RECEPTIONIST,
         ]);
 
         $services = [];

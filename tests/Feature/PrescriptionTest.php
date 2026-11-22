@@ -21,8 +21,8 @@ class PrescriptionTest extends TestCase
             'prescribed_on' => '2026-11-20',
             'notes' => 'بعد الخلع',
             'items' => [
-                ['drug_name' => 'مسكن تجريبي', 'dose' => '500 مجم', 'frequency' => 'مرتين يوميًا', 'duration' => '3 أيام', 'instructions' => 'بعد الأكل'],
-                ['drug_name' => 'غسول تجريبي'],
+                ['drug_name' => 'دواء تجريبي أ', 'dose' => '500 مجم', 'frequency' => 'مرتين يوميًا', 'duration' => '3 أيام', 'instructions' => 'بعد الأكل'],
+                ['drug_name' => 'دواء تجريبي ب'],
             ],
         ])->assertRedirect();
 
@@ -31,19 +31,19 @@ class PrescriptionTest extends TestCase
         $this->assertSame($user->clinic_id, $rx->clinic_id);
         $this->assertSame($user->id, $rx->user_id);
         $this->assertCount(2, $rx->items);
-        $this->assertSame('مسكن تجريبي', $rx->items[0]->drug_name);
+        $this->assertSame('دواء تجريبي أ', $rx->items[0]->drug_name);
 
         $this->actingAs($user)->put("/prescriptions/{$rx->id}", [
             'prescribed_on' => '2026-11-21',
             'items' => [
-                ['drug_name' => 'مضاد تجريبي', 'dose' => '1 جم', 'frequency' => '3 مرات', 'duration' => 'أسبوع'],
+                ['drug_name' => 'دواء تجريبي ج', 'dose' => '1 جم', 'frequency' => '3 مرات', 'duration' => 'أسبوع'],
             ],
         ])->assertRedirect();
 
         $rx->refresh();
         $this->assertSame('2026-11-21', $rx->prescribed_on->toDateString());
         $this->assertCount(1, $rx->items()->get());
-        $this->assertSame('مضاد تجريبي', $rx->items()->first()->drug_name);
+        $this->assertSame('دواء تجريبي ج', $rx->items()->first()->drug_name);
 
         $this->actingAs($user)->delete("/prescriptions/{$rx->id}")->assertRedirect();
         $this->assertDatabaseMissing('prescriptions', ['id' => $rx->id]);

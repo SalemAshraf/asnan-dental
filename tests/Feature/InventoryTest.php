@@ -65,11 +65,19 @@ class InventoryTest extends TestCase
         $this->assertSame('7.000', (string) $item->fresh()->quantity); // 10 - 1.5*2
         $this->assertSame(1, InventoryMovement::where('reason', 'procedure')->count());
 
-        // Re-saving completed does not double-deduct.
+        // Un-completing reverses the deduction exactly once.
         $this->actingAs($user)->patch("/plan-items/{$planItem->id}", ['status' => 'in_progress'])->assertRedirect();
+        $this->assertSame('10.000', (string) $item->fresh()->quantity);
+        $this->assertSame(2, InventoryMovement::where('reason', 'procedure')->count());
+
+        // Staying un-completed does not reverse twice.
+        $this->actingAs($user)->patch("/plan-items/{$planItem->id}", ['status' => 'accepted'])->assertRedirect();
+        $this->assertSame('10.000', (string) $item->fresh()->quantity);
+
+        // Completing again after the reversal deducts again.
         $this->actingAs($user)->patch("/plan-items/{$planItem->id}", ['status' => 'completed'])->assertRedirect();
         $this->assertSame('7.000', (string) $item->fresh()->quantity);
-        $this->assertSame(1, InventoryMovement::where('reason', 'procedure')->count());
+        $this->assertSame(3, InventoryMovement::where('reason', 'procedure')->count());
     }
 
     public function test_inventory_is_tenant_scoped(): void

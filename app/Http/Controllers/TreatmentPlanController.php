@@ -88,6 +88,8 @@ class TreatmentPlanController extends Controller
         $item->update($data);
         if (! $wasCompleted && $item->status === 'completed') {
             \App\Support\InventoryDeduction::deductForPlanItem($item, $request->user()->id);
+        } elseif ($wasCompleted && $item->status !== 'completed') {
+            \App\Support\InventoryDeduction::reverseForPlanItem($item, $request->user()->id);
         }
         $item->plan->recalcTotal();
 

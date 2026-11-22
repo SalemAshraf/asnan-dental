@@ -35,6 +35,7 @@ const methodMax = Math.max(1, ...Object.values(props.byMethod));
                 <input v-model="from" type="date" class="input !w-auto !py-1.5" :aria-label="t('rep.from')">
                 <input v-model="to" type="date" class="input !w-auto !py-1.5" :aria-label="t('rep.to')">
                 <button @click="apply" class="btn-primary btn-sm !py-2">{{ t('rep.apply') }}</button>
+                <a :href="`/reports/export?from=${from}&to=${to}`" class="btn-secondary btn-sm !py-2">{{ t('rep.export') }}</a>
             </div>
         </div>
 

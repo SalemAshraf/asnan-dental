@@ -70,6 +70,7 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::post('recalls/{recall}/transition', [\App\Http\Controllers\RecallController::class, 'transition'])->name('recalls.transition');
 
     Route::get('reports', \App\Http\Controllers\ReportController::class)->name('reports');
+    Route::get('reports/export', [\App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
 
     Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::post('appointments', [AppointmentController::class, 'store'])->name('appointments.store');

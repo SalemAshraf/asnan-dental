@@ -17,6 +17,59 @@ class ReportController extends Controller
     {
         abort_unless($request->user()->isOwner(), 403);
 
+        return Inertia::render('Reports', $this->reportData($request));
+    }
+
+    /** CSV export of the same owner-only report, same range. */
+    public function export(Request $request)
+    {
+        abort_unless($request->user()->isOwner(), 403);
+        $d = $this->reportData($request);
+        $currency = $d['currency'];
+        $money = fn (int $minor) => number_format($minor / 100, 2, '.', '');
+
+        $rows = [];
+        $rows[] = ['section', 'label', 'value', 'currency'];
+        $rows[] = ['range', 'from', $d['range']['from'], ''];
+        $rows[] = ['range', 'to', $d['range']['to'], ''];
+        foreach ([
+            'collected' => $d['cards']['collected_minor'],
+            'invoiced' => $d['cards']['invoiced_minor'],
+            'outstanding' => $d['cards']['outstanding_minor'],
+        ] as $k => $v) {
+            $rows[] = ['summary', $k, $money($v), $currency];
+        }
+        $rows[] = ['summary', 'new_patients', $d['cards']['new_patients'], ''];
+        $rows[] = ['summary', 'appointments', $d['cards']['appointments'], ''];
+        $rows[] = ['summary', 'completion_pct', $d['cards']['completion_pct'], ''];
+        $rows[] = ['summary', 'no_show_pct', $d['cards']['no_show_pct'], ''];
+        foreach ($d['byMethod'] as $m => $v) {
+            $rows[] = ['payments_by_method', $m, $money($v), $currency];
+        }
+        foreach ($d['byStatus'] as $st => $v) {
+            $rows[] = ['appointments_by_status', $st, $v, ''];
+        }
+        foreach ($d['perDentist'] as $r) {
+            $rows[] = ['per_dentist', $r['dentist'], "total={$r['total']};completed={$r['completed']};no_show={$r['no_show']};cancelled={$r['cancelled']}", ''];
+        }
+        foreach ($d['topServices'] as $r) {
+            $rows[] = ['top_services', $r['name'], "qty={$r['count']};total=".$money($r['total_minor']), $currency];
+        }
+
+        $filename = 'taqwim-report-'.$d['range']['from'].'-to-'.$d['range']['to'].'.csv';
+
+        return response()->streamDownload(function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // UTF-8 BOM so Excel reads Arabic correctly
+            foreach ($rows as $row) {
+                fputcsv($out, $row);
+            }
+            fclose($out);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    private function reportData(Request $request): array
+    {
         $tz = $request->user()->clinic?->timezone ?? config('app.timezone');
         $from = Carbon::parse($request->input('from', now($tz)->subDays(89)->toDateString()), $tz)->startOfDay();
         $to = Carbon::parse($request->input('to', now($tz)->toDateString()), $tz)->endOfDay();
@@ -101,7 +154,7 @@ class ReportController extends Controller
         $apptCount = $appointments->count();
         $completed = $byStatus['completed'] ?? 0;
 
-        return Inertia::render('Reports', [
+        return [
             'range' => ['from' => $from->toDateString(), 'to' => $to->toDateString()],
             'currency' => $request->user()->clinic?->currency ?? 'EGP',
             'cards' => [
@@ -122,6 +175,6 @@ class ReportController extends Controller
                 'label' => Carbon::parse($k)->format('j/n'),
                 'a' => $v, 'b' => (int) ($issuedSeries[$k] ?? 0),
             ])->values(),
-        ]);
+        ];
     }
 }

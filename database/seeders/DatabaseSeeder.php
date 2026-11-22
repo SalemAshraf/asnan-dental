@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
             'country' => 'EG',
             'currency' => 'EGP',
             'timezone' => 'Africa/Cairo',
-            'tax_rate_bp' => 1400,
+            // No statutory rate is shipped. 0 = no tax until the clinic sets its own
+            // rate in Settings after verifying the rules that apply to it.
+            'tax_rate_bp' => 0,
             'invoice_prefix' => 'INV',
         ]);
 

@@ -14,10 +14,10 @@ Laravel 13 + Vue 3 (Inertia) + Tailwind 4.
 - **Tenancy & staff**: clinics, branches, users with roles (owner / dentist / reception). Tenant isolation enforced by a global scope; cross-clinic access returns 404 (tested).
 - **Patients**: file numbers, contact + WhatsApp, birth date, medical alerts, notes, national ID (encrypted at rest).
 - **Consent records**: type, text snapshot, method, timestamp — append-only.
-- **FDI odontogram**: per-tooth conditions and surfaces (M/O/D/B/L), interactive chart, RBAC-gated edits.
+- **FDI odontogram**: per-tooth conditions and surfaces (M/O/D/B/L), interactive chart, RBAC-gated edits. The chart layout follows the FDI two-digit notation orientation (midline 11|21, 41|31) as shown in secondary references; this is a layout match, not a clinical validation against the governing standard (ISO 3950).
 - **Treatment plans**: lifecycle (draft → proposed → accepted → in_progress → completed / cancelled), priced items per tooth, per-item status.
 - **Appointments**: branch/dentist/chair booking with overlap protection (same dentist or same chair rejected, tested), day view, status transitions. Times are stored in UTC from clinic-local wall time (clinic timezone).
-- **Billing**: invoices generated from accepted plan items, server-computed totals with per-clinic tax rate (basis points), draft → issue → partially_paid → paid, void, sequential per-clinic invoice numbers.
+- **Billing**: invoices generated from accepted plan items, server-computed totals with a per-clinic tax rate in basis points that the clinic sets itself in Settings (0 = no tax; no statutory rate is shipped or implied), draft → issue → partially_paid → paid, void, sequential per-clinic invoice numbers.
 - **Payments**: manual records of money received (cash / InstaPay / bank transfer / wallet reference) with installment support and overpayment protection (tested). **Not** card processing or gateway integration.
 - **Audit log**: append-only, sensitive fields excluded, owner-only viewer.
 - **Dashboard**: today's appointments, key stats.

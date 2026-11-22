@@ -1,6 +1,6 @@
 <script setup>
 import { Link, usePage, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
@@ -12,6 +12,8 @@ const nav = [
     { href: '/services', label: 'الخدمات' },
 ];
 const logout = () => router.post('/logout');
+const menuOpen = ref(false);
+const closeMenu = () => { menuOpen.value = false; };
 </script>
 
 <template>
@@ -29,10 +31,21 @@ const logout = () => router.post('/logout');
                     </nav>
                 </div>
                 <div class="flex items-center gap-3 text-sm">
-                    <span>{{ user?.name }}</span>
+                    <span class="hidden sm:inline">{{ user?.name }}</span>
                     <button @click="logout" class="bg-teal-700 hover:bg-teal-600 rounded px-3 py-1">خروج</button>
+                    <button @click="menuOpen = !menuOpen" class="md:hidden bg-teal-700 hover:bg-teal-600 rounded p-2" aria-label="القائمة" :aria-expanded="menuOpen">
+                        <svg v-if="!menuOpen" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        <svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                    </button>
                 </div>
             </div>
+            <nav v-if="menuOpen" class="md:hidden border-t border-teal-700 px-4 py-2 flex flex-col gap-1 text-sm">
+                <Link v-for="item in nav" :key="item.href" :href="item.href" @click="closeMenu"
+                    class="hover:bg-teal-700 rounded px-3 py-2"
+                    :class="{ 'bg-teal-700': $page.url === item.href }">{{ item.label }}</Link>
+                <Link v-if="user?.role === 'owner'" href="/settings" @click="closeMenu" class="hover:bg-teal-700 rounded px-3 py-2">الإعدادات</Link>
+                <Link v-if="user?.role === 'owner'" href="/audit-log" @click="closeMenu" class="hover:bg-teal-700 rounded px-3 py-2">سجل التدقيق</Link>
+            </nav>
         </header>
         <main class="max-w-7xl mx-auto px-4 py-6">
             <slot />

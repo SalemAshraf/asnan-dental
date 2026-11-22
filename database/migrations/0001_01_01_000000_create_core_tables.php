@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('country', 2)->default('EG');
             $table->string('currency', 3)->default('EGP');
             $table->string('timezone', 64)->default('Africa/Cairo');
+            // Basis points. 0 = no tax until the clinic configures its own rate; no statutory rate shipped.
             $table->unsignedInteger('tax_rate_bp')->default(0);
             $table->string('invoice_prefix', 10)->default('INV');
             $table->unsignedBigInteger('next_invoice_seq')->default(1);

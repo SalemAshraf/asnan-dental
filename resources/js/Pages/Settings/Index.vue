@@ -25,7 +25,7 @@ const toggle = (id) => useForm({}).post(`/settings/users/${id}/toggle`, { preser
                 <input v-model="clinicForm.phone" class="w-full border rounded px-2 py-1" dir="ltr"></div>
             <div><label class="text-xs text-gray-500">العنوان</label>
                 <input v-model="clinicForm.address" class="w-full border rounded px-2 py-1"></div>
-            <div><label class="text-xs text-gray-500">نسبة الضريبة (نقاط أساس، 1400 = 14%)</label>
+            <div><label class="text-xs text-gray-500">نسبة الضريبة (نقاط أساس، مثال: 500 = 5%). اضبطها بعد التحقق من القواعد المطبقة على عيادتك — لا توجد نسبة افتراضية ملزمة</label>
                 <input v-model="clinicForm.tax_rate_bp" type="number" min="0" max="10000" class="w-full border rounded px-2 py-1" dir="ltr"></div>
             <div><label class="text-xs text-gray-500">بادئة الفواتير</label>
                 <input v-model="clinicForm.invoice_prefix" class="w-full border rounded px-2 py-1" dir="ltr"></div>

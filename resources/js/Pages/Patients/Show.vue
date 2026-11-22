@@ -11,10 +11,31 @@ import { ref } from 'vue';
 
 const props = defineProps({ patient: Object, appointments: Array, chart: Object, can: Object });
 const tab = ref('info');
-const tabs = [['info', 'pat.show.tab.info'], ['chart', 'pat.show.tab.chart'], ['plans', 'pat.show.tab.plans'], ['billing', 'pat.show.tab.billing'], ['consents', 'pat.show.tab.consents']];
+const tabs = [
+    ['info', 'pat.show.tab.info'], ['chart', 'pat.show.tab.chart'], ['plans', 'pat.show.tab.plans'],
+    ...(props.can.clinical ? [['images', 'pat.show.tab.images']] : []),
+    ['billing', 'pat.show.tab.billing'], ['consents', 'pat.show.tab.consents'],
+];
 
 const consent = useForm({ type: 'data_processing', text_snapshot: '', method: 'written', given_at: new Date().toISOString().slice(0, 16) });
 const saveConsent = () => consent.post(`/patients/${props.patient.id}/consents`, { preserveScroll: true, onSuccess: () => consent.reset('text_snapshot') });
+
+const img = useForm({ image: null, kind: 'xray', title: '', taken_on: '', notes: '' });
+const pickImage = (e) => { img.image = e.target.files?.[0] ?? null; };
+const saveImage = () => {
+    if (!img.image) return;
+    img.post(`/patients/${props.patient.id}/images`, {
+        preserveScroll: true, forceFormData: true,
+        onSuccess: () => { img.reset(); img.image = null; if (imgInput.value) imgInput.value.value = ''; },
+    });
+};
+const imgInput = ref(null);
+const removeImage = (id) => {
+    if (!window.confirm(t('pat.img.confirmDelete'))) return;
+    router.delete(`/patient-images/${id}`, { preserveScroll: true });
+};
+const imgUrl = (id) => `/patient-images/${id}/file`;
+const dstr = (d) => (d ? String(d).slice(0, 10) : '');
 
 const plan = useForm({ title: '', notes: '' });
 const savePlan = () => plan.post(`/patients/${props.patient.id}/plans`, { preserveScroll: true, onSuccess: () => plan.reset() });
@@ -141,6 +162,57 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div v-if="tab === 'images' && can.clinical">
+            <form @submit.prevent="saveImage" class="card mb-4">
+                <h2 class="mb-3 font-bold text-ink-900">{{ t('pat.img.add') }}</h2>
+                <div class="grid gap-3 sm:grid-cols-2">
+                    <label class="block">
+                        <span class="mb-1 block text-xs text-slate-500">{{ t('pat.img.kind') }}</span>
+                        <select v-model="img.kind" class="input">
+                            <option value="xray">{{ t('pat.img.kind.xray') }}</option>
+                            <option value="photo">{{ t('pat.img.kind.photo') }}</option>
+                        </select>
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-xs text-slate-500">{{ t('pat.img.date') }}</span>
+                        <input v-model="img.taken_on" type="date" class="input" dir="ltr" />
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-xs text-slate-500">{{ t('pat.img.title') }}</span>
+                        <input v-model="img.title" type="text" class="input" maxlength="190" />
+                    </label>
+                    <label class="block">
+                        <span class="mb-1 block text-xs text-slate-500">{{ t('pat.img.file') }}</span>
+                        <input ref="imgInput" type="file" accept="image/jpeg,image/png,image/webp" required @change="pickImage" class="input !px-0 !py-0 text-xs text-slate-600 file:me-3 file:rounded-s-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2.5 file:text-xs file:font-semibold file:text-brand-700 hover:file:bg-brand-100 ps-3" />
+                    </label>
+                </div>
+                <label class="mt-3 block">
+                    <span class="mb-1 block text-xs text-slate-500">{{ t('pat.img.notes') }}</span>
+                    <textarea v-model="img.notes" rows="2" class="input" maxlength="2000"></textarea>
+                </label>
+                <div v-if="img.errors.image" class="mt-2 text-sm text-rose-600">{{ img.errors.image }}</div>
+                <button type="submit" class="btn-primary mt-3" :disabled="img.processing || !img.image">{{ t('pat.img.upload') }}</button>
+            </form>
+            <EmptyState v-if="!(patient.images ?? []).length" icon="photo" :title="t('pat.img.empty')" />
+            <div v-else class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div v-for="im in patient.images" :key="im.id" class="card !p-3">
+                    <a :href="imgUrl(im.id)" target="_blank" rel="noopener" class="block overflow-hidden rounded-lg bg-slate-100">
+                        <img :src="imgUrl(im.id)" :alt="im.title || im.original_name" class="h-40 w-full object-cover" loading="lazy" />
+                    </a>
+                    <div class="mt-2 flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-semibold text-ink-900">{{ im.title || im.original_name }}</p>
+                            <p class="text-xs text-slate-500">
+                                {{ t('pat.img.kind.' + im.kind) }}<span v-if="im.taken_on"> · <span class="tabular-nums" dir="ltr">{{ dstr(im.taken_on) }}</span></span>
+                                <span v-if="im.uploader"> · {{ t('pat.img.by') }} {{ im.uploader.name }}</span>
+                            </p>
+                        </div>
+                        <button type="button" class="btn-secondary btn-sm shrink-0 !text-rose-600" @click="removeImage(im.id)">{{ t('pat.img.delete') }}</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div v-if="tab === 'consents'" class="max-w-xl">

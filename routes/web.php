@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OdontogramController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PatientImageController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TreatmentPlanController;
@@ -73,6 +74,9 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::resource('patients', PatientController::class);
     Route::post('patients/{patient}/consents', [ConsentController::class, 'store'])->name('consents.store');
     Route::post('patients/{patient}/odontogram', [OdontogramController::class, 'upsert'])->name('odontogram.upsert');
+    Route::post('patients/{patient}/images', [PatientImageController::class, 'store'])->name('patient-images.store');
+    Route::get('patient-images/{image}/file', [PatientImageController::class, 'file'])->name('patient-images.file');
+    Route::delete('patient-images/{image}', [PatientImageController::class, 'destroy'])->name('patient-images.destroy');
     Route::post('patients/{patient}/plans', [TreatmentPlanController::class, 'store'])->name('plans.store');
 
     Route::post('plans/{plan}/transition', [TreatmentPlanController::class, 'transition'])->name('plans.transition');

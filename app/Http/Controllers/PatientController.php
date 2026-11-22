@@ -54,11 +54,15 @@ class PatientController extends Controller
     {
         $user = request()->user();
 
-        $patient->load([
+        $load = [
             'consents' => fn ($q) => $q->orderByDesc('given_at'),
             'treatmentPlans' => fn ($q) => $q->with('items')->orderByDesc('id'),
             'invoices' => fn ($q) => $q->orderByDesc('id')->limit(20),
-        ]);
+        ];
+        if ($user->isClinical()) {
+            $load['images'] = fn ($q) => $q->with('uploader:id,name');
+        }
+        $patient->load($load);
 
         $appointments = $patient->appointments()
             ->with(['dentist:id,name', 'branch:id,name'])

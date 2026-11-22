@@ -34,6 +34,11 @@ class Patient extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function images(): HasMany
+    {
+        return $this->hasMany(PatientImage::class)->orderByDesc('id');
+    }
+
     public function odontogramEntries(): HasMany
     {
         return $this->hasMany(OdontogramEntry::class);

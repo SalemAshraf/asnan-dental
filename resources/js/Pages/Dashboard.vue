@@ -6,13 +6,18 @@ import StatusBadge from '@/Components/StatusBadge.vue';
 import EmptyState from '@/Components/EmptyState.vue';
 import Icon from '@/Components/Icon.vue';
 import { fmt } from '@/money';
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { t, fmtDate, fmtTime } from '@/i18n';
 
 const props = defineProps({
     stats: Object, apptSeries: Array, collectedSeries: Array, patientsSeries: Array,
     chart: Array, todayAppointments: Array, unpaid: Array, todayLabel: String, clinic: Object,
+    setupGuide: Object,
 });
+const dismissForm = useForm({});
+const dismissGuide = () => dismissForm.post('/setup-guide/dismiss');
+const guideVisible = computed(() => props.setupGuide && !props.setupGuide.dismissed && !props.setupGuide.complete);
 const money = (v) => fmt(v, props.clinic?.currency);
 const time = fmtTime;
 const todayText = fmtDate(props.todayLabel, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -26,6 +31,33 @@ const todayText = fmtDate(props.todayLabel, { weekday: 'long', day: 'numeric', m
                 <p class="text-sm text-slate-500">{{ clinic?.name }} · {{ todayText }}</p>
             </div>
             <Link href="/appointments" class="btn-secondary btn-sm">{{ t('dash.allToday') }}</Link>
+        </div>
+
+        <div v-if="guideVisible" class="mb-6 rounded-2xl border border-brand-200 bg-white p-5 shadow-sm">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-ink-900">{{ t('guide.title') }}</h2>
+                    <p class="mt-0.5 text-sm text-slate-500">{{ t('guide.subtitle', { done: setupGuide.done, total: setupGuide.total }) }}</p>
+                </div>
+                <button class="text-xs text-slate-400 hover:text-slate-600 hover:underline" @click="dismissGuide">{{ t('guide.dismiss') }}</button>
+            </div>
+            <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div class="h-full rounded-full bg-brand-600 transition-all" :style="{ width: (setupGuide.done / setupGuide.total * 100) + '%' }" />
+            </div>
+            <ol class="mt-4 space-y-1">
+                <li v-for="(step, i) in setupGuide.steps" :key="step.key">
+                    <Link :href="step.href" class="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-slate-50">
+                        <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold" :class="step.done ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+                            <svg v-if="step.done" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <template v-else>{{ i + 1 }}</template>
+                        </span>
+                        <span class="min-w-0">
+                            <span class="block text-sm font-semibold" :class="step.done ? 'text-slate-400 line-through' : 'text-ink-900'">{{ t('guide.step.' + step.key) }}</span>
+                            <span class="block text-xs text-slate-500">{{ t('guide.hint.' + step.key) }}</span>
+                        </span>
+                    </Link>
+                </li>
+            </ol>
         </div>
 
         <div class="mb-6 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">

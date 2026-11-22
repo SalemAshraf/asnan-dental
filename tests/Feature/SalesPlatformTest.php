@@ -184,4 +184,37 @@ class SalesPlatformTest extends TestCase
         Subscription::create(['clinic_id' => $clinic->id, 'status' => 'active', 'trial_enforced' => false, 'note' => 'Existing clinic before the sales platform; activated by default.']);
         $this->assertFalse($clinic->fresh()->isReadOnly());
     }
+
+    public function test_setup_guide_resumes_hides_and_reappears(): void
+    {
+        $clinic = \App\Models\Clinic::factory()->create();
+        $owner = User::factory()->create(['clinic_id' => $clinic->id, 'role' => 'owner']);
+
+        // Fresh clinic: guide is visible with all steps open; live state drives completion.
+        $page = $this->actingAs($owner)->get('/dashboard');
+        $page->assertOk();
+        $guide = $page->viewData('page')['props']['setupGuide'];
+        $this->assertFalse($guide['dismissed']);
+        $this->assertFalse($guide['complete']);
+        $this->assertSame(0, $guide['done']);
+
+        // Completing real work flips the matching step.
+        \App\Models\Service::create(['clinic_id' => $clinic->id, 'name_ar' => 'كشف', 'category' => 'exam', 'default_price_minor' => 10000, 'duration_min' => 30]);
+        $guide = $this->actingAs($owner)->get('/dashboard')->viewData('page')['props']['setupGuide'];
+        $this->assertSame(1, $guide['done']);
+
+        // Dismiss hides it; show restores it.
+        $this->actingAs($owner)->post('/setup-guide/dismiss');
+        $guide = $this->actingAs($owner)->get('/dashboard')->viewData('page')['props']['setupGuide'];
+        $this->assertTrue($guide['dismissed']);
+        $this->actingAs($owner)->post('/setup-guide/show');
+        $guide = $this->actingAs($owner)->get('/dashboard')->viewData('page')['props']['setupGuide'];
+        $this->assertFalse($guide['dismissed']);
+
+        // Non-owners never see or control it.
+        $reception = User::factory()->create(['clinic_id' => $clinic->id, 'role' => 'receptionist']);
+        $page = $this->actingAs($reception)->get('/dashboard');
+        $this->assertNull($page->viewData('page')['props']['setupGuide']);
+        $this->actingAs($reception)->post('/setup-guide/dismiss')->assertForbidden();
+    }
 }

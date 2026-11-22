@@ -4,7 +4,9 @@ import Badge from '@/Components/Badge.vue';
 import { useForm } from '@inertiajs/vue3';
 import { t } from '@/i18n';
 
-const props = defineProps({ clinic: Object, branches: Array, users: Array, roles: Array });
+const props = defineProps({ clinic: Object, branches: Array, users: Array, roles: Array, setupDismissed: Boolean });
+const guideForm = useForm({});
+const showGuide = () => guideForm.post('/setup-guide/show', { preserveScroll: true });
 
 
 const clinicForm = useForm({
@@ -19,7 +21,11 @@ const toggle = (id) => useForm({}).post(`/settings/users/${id}/toggle`, { preser
 
 <template>
     <AppLayout>
-        <h1 class="mb-5 text-2xl font-bold text-ink-900">{{ t('set.title') }}</h1>
+                <div v-if="setupDismissed" class="mb-4 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">
+            <span class="text-slate-500">{{ t('guide.title') }}</span>
+            <button class="btn-secondary btn-sm" @click="showGuide">{{ t('guide.show') }}</button>
+        </div>
+<h1 class="mb-5 text-2xl font-bold text-ink-900">{{ t('set.title') }}</h1>
 
         <form @submit.prevent="clinicForm.put('/settings/clinic')" class="card mb-4 grid gap-3 text-sm md:grid-cols-3">
             <div><label class="label">{{ t('set.clinicName') }}</label>

@@ -83,6 +83,8 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::post('invoices/{invoice}/void', [InvoiceController::class, 'void'])->name('invoices.void');
     Route::post('invoices/{invoice}/payments', [InvoiceController::class, 'addPayment'])->name('invoices.payments.store');
 
+    Route::post('setup-guide/dismiss', [\App\Http\Controllers\SetupGuideController::class, 'dismiss'])->middleware('role:owner')->name('setup.dismiss');
+    Route::post('setup-guide/show', [\App\Http\Controllers\SetupGuideController::class, 'show'])->middleware('role:owner')->name('setup.show');
     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::put('settings/clinic', [SettingsController::class, 'updateClinic'])->name('settings.clinic.update');
     Route::post('settings/branches', [SettingsController::class, 'storeBranch'])->name('settings.branches.store');

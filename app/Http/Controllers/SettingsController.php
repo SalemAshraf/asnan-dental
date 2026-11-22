@@ -20,6 +20,7 @@ class SettingsController extends Controller
             'branches' => Branch::orderBy('id')->get(),
             'users' => User::orderBy('id')->get(['id', 'name', 'email', 'phone', 'role', 'branch_id', 'is_active']),
             'roles' => User::ROLES,
+            'setupDismissed' => $request->user()->clinic?->setup_dismissed_at !== null,
         ]);
     }
 

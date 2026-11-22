@@ -107,6 +107,34 @@ class DashboardController extends Controller
             'unpaid' => $unpaid,
             'todayLabel' => $now->toDateString(),
             'clinic' => auth()->user()->clinic?->only(['name', 'country', 'currency', 'timezone']),
+            'setupGuide' => $this->setupGuide(),
         ]);
+    }
+
+    /** First-run setup checklist, owner only, resumable: each step derives from live clinic state, so it picks up where the clinic left off and disappears on its own once everything is done. */
+    private function setupGuide(): ?array
+    {
+        $user = auth()->user();
+        if (! $user?->isOwner()) {
+            return null;
+        }
+        $clinic = $user->clinic;
+
+        $steps = [
+            ['key' => 'settings', 'done' => filled($clinic?->phone), 'href' => '/settings'],
+            ['key' => 'services', 'done' => \App\Models\Service::query()->exists(), 'href' => '/services'],
+            ['key' => 'team', 'done' => \App\Models\User::query()->count() > 1 || \App\Models\Branch::query()->exists(), 'href' => '/settings'],
+            ['key' => 'patient', 'done' => Patient::query()->exists(), 'href' => '/patients/create'],
+            ['key' => 'appointment', 'done' => Appointment::query()->exists(), 'href' => '/appointments'],
+        ];
+        $doneCount = count(array_filter($steps, fn ($s) => $s['done']));
+
+        return [
+            'dismissed' => $clinic?->setup_dismissed_at !== null,
+            'complete' => $doneCount === count($steps),
+            'steps' => $steps,
+            'done' => $doneCount,
+            'total' => count($steps),
+        ];
     }
 }

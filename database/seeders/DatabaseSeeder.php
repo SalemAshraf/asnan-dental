@@ -226,6 +226,69 @@ class DatabaseSeeder extends Seeder
         $makeInvoice($patients[9], [['desc' => 'علاج عصب', 'price' => 250000], ['desc' => 'كشف وتشخيص', 'price' => 30000]], 6, $at(12, 13), [['amount' => 150000, 'method' => 'instapay'], ['amount' => 50000, 'method' => 'cash', 'plusDays' => 5]], 'partially_paid');
         $makeInvoice($patients[10], [['desc' => 'خلع ضرس', 'price' => 80000], ['desc' => 'حشو ضوئي', 'price' => 90000]], 7, $at(2, 10), [], 'issued');
 
+        // Extended synthetic volume so the demo dashboards, reports and charts
+        // look like a busy working clinic: more patients registered over the
+        // past six months, a full appointment book (past two months plus the
+        // coming two weeks) and invoices with mixed statuses and payment
+        // methods. All names and numbers remain fictional.
+        $firstNames = ['أحمد', 'محمد', 'محمود', 'مصطفى', 'كريم', 'عمر', 'يوسف', 'حسن', 'علي', 'إبراهيم', 'طارق', 'خالد', 'سامي', 'هشام', 'كمال',
+            'فاطمة', 'مريم', 'سارة', 'نور', 'هدى', 'منى', 'آية', 'دينا', 'رنا', 'سلمى', 'ياسمين', 'شيماء', 'أسماء', 'رانيا', 'هبة'];
+        $lastNames = ['السيد', 'عبد الله', 'محمد', 'حسن', 'إبراهيم', 'علي', 'محمود', 'أحمد', 'النجار', 'الشاذلي',
+            'عثمان', 'سليمان', 'عبد الرحمن', 'الجندي', 'رمضان', 'فتحي', 'شعبان', 'الزيات', 'حجازي', 'مراد'];
+        $extraPatients = [];
+        $seq = count($patients) + 1;
+        foreach (range(0, 75) as $i) {
+            $registered = now()->subDays(1 + ($i * 2) % 175);
+            $extraPatients[] = Patient::create([
+                'clinic_id' => $clinic->id, 'branch_id' => $branch->id, 'file_no' => $seq + $i,
+                'full_name' => $firstNames[$i % count($firstNames)].' '.$lastNames[intdiv($i, 3) % count($lastNames)],
+                'phone' => '011'.str_pad((string) (10000000 + $i * 137), 8, '0', STR_PAD_LEFT),
+                'whatsapp' => '011'.str_pad((string) (10000000 + $i * 137), 8, '0', STR_PAD_LEFT),
+                'gender' => $i % 2 === 0 ? 'male' : 'female',
+                'birth_date' => Carbon::now($tz)->subYears(20 + $i % 45)->subDays($i * 3)->toDateString(),
+                'medical_alerts' => $i % 17 === 0 ? ['حساسية من البنسلين'] : [],
+                'notes' => $i % 9 === 0 ? 'يفضل مواعيد المساء.' : null,
+                'created_at' => $registered, 'updated_at' => $registered,
+            ]);
+        }
+        $clinic->update(['next_patient_seq' => $seq + count($extraPatients)]);
+        $allPatients = array_merge($patients, $extraPatients);
+
+        $pastStatuses = ['completed', 'completed', 'completed', 'confirmed', 'cancelled', 'no_show'];
+        foreach (range(0, 139) as $i) {
+            $d = ($i * 3) % 74 - 60; // -60 days .. +13 days
+            $h = 9 + $i % 9;         // 09:00 .. 17:00 clinic-local
+            $st = $d < 0 ? $pastStatuses[$i % count($pastStatuses)] : ($d <= 2 ? 'confirmed' : 'scheduled');
+            Appointment::create([
+                'clinic_id' => $clinic->id, 'branch_id' => $branch->id,
+                'patient_id' => $allPatients[$i % count($allPatients)]->id,
+                'dentist_id' => $i % 2 ? $dentist->id : $owner->id,
+                'chair' => 'كرسي '.($i % 2 + 1),
+                'starts_at' => $at($d, $h), 'ends_at' => $at($d, $h)->addMinutes(30 + ($i % 3) * 15),
+                'status' => $st, 'reason' => $i % 4 === 0 ? 'كشف' : 'متابعة',
+            ]);
+        }
+
+        $svcList = array_values($services);
+        $methods = ['cash', 'card', 'instapay', 'bank_transfer', 'wallet'];
+        foreach (range(0, 24) as $i) {
+            $svc = $svcList[$i % count($svcList)];
+            $issuedAt = $at(5 + ($i * 6) % 145, 11 + $i % 6);
+            $st = $i % 5 === 4 ? 'issued' : ($i % 5 === 3 ? 'partially_paid' : 'paid');
+            $items = [['desc' => $svc->name_ar, 'price' => $svc->default_price_minor]];
+            if ($i % 3 === 0) {
+                $svc2 = $svcList[($i + 3) % count($svcList)];
+                $items[] = ['desc' => $svc2->name_ar, 'price' => $svc2->default_price_minor];
+            }
+            $subtotal = collect($items)->sum('price');
+            $paymentsSpec = match ($st) {
+                'paid' => [['amount' => $subtotal, 'method' => $methods[$i % count($methods)]]],
+                'partially_paid' => [['amount' => intdiv($subtotal, 2), 'method' => $methods[$i % count($methods)]]],
+                default => [],
+            };
+            $makeInvoice($allPatients[($i * 7) % count($allPatients)], $items, 8 + $i, $issuedAt, $paymentsSpec, $st);
+        }
+
         // Recalls: one overdue, upcoming ones, closed history.
         Recall::create(['clinic_id' => $clinic->id, 'patient_id' => $patients[3]->id, 'service_id' => $services['CLEAN']->id, 'due_date' => now($tz)->subDays(3)->toDateString(), 'status' => 'pending', 'reason' => 'مراجعة تنظيف دورية', 'created_by' => $owner->id]);
         Recall::create(['clinic_id' => $clinic->id, 'patient_id' => $patients[9]->id, 'due_date' => now($tz)->addDays(3)->toDateString(), 'status' => 'pending', 'reason' => 'استكمال علاج العصب', 'created_by' => $owner->id]);

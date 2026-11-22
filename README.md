@@ -140,6 +140,8 @@ php artisan test
 | `PLATFORM_TRIAL_DAYS` | Unset = no trial. Trials are an undecided commercial term; do not set without an owner decision. |
 | `PLATFORM_SALES_WHATSAPP` | Empty = neutral "contact us" activation state on pricing. |
 
+Shared-host (cPanel) deploys: see [docs/deployment.md](docs/deployment.md) for the host PHP handler block every deploy must preserve and the live host's nonsecret configuration choices.
+
 ## Not built yet
 
 Automatic WhatsApp sending, SMS and email notifications, online payment, insurance claims, a native mobile app, and an AI assistant inside the product itself. The landing page says the same to visitors.

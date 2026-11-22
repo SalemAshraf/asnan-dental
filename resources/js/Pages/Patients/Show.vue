@@ -43,7 +43,7 @@ const nextTransitions = { draft: ['proposed', 'cancelled'], proposed: ['accepted
         </div>
 
         <div v-if="patient.medical_alerts?.length" class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-3 mb-4 text-sm">
-            ⚠️ تنبيهات طبية: {{ patient.medical_alerts.join('، ') }}
+            تنبيهات طبية هامة: {{ patient.medical_alerts.join('، ') }}
         </div>
 
         <div class="flex gap-1 border-b mb-4 text-sm">

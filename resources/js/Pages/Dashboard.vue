@@ -15,7 +15,7 @@ const cards = (s) => [
 
 <template>
     <AppLayout>
-        <h1 class="text-2xl font-bold mb-1">صباح الخير 👋</h1>
+        <h1 class="text-2xl font-bold mb-1">لوحة المتابعة</h1>
         <p class="text-gray-500 mb-6">{{ clinic?.name }}</p>
 
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">

@@ -112,6 +112,10 @@ Route::middleware(['auth', 'clinic', 'writable'])->group(function () {
     Route::put('lab-cases/{labCase}', [\App\Http\Controllers\LabCaseController::class, 'update'])->name('lab.update');
     Route::post('lab-cases/{labCase}/transition', [\App\Http\Controllers\LabCaseController::class, 'transition'])->name('lab.transition');
     Route::delete('lab-cases/{labCase}', [\App\Http\Controllers\LabCaseController::class, 'destroy'])->name('lab.destroy');
+    Route::get('insurance', [\App\Http\Controllers\InsuranceController::class, 'index'])->name('insurance.index');
+    Route::post('insurance/companies', [\App\Http\Controllers\InsuranceController::class, 'storeCompany'])->name('insurance.companies.store');
+    Route::post('insurance/claims', [\App\Http\Controllers\InsuranceController::class, 'storeClaim'])->name('insurance.claims.store');
+    Route::patch('insurance/claims/{insuranceClaim}', [\App\Http\Controllers\InsuranceController::class, 'updateClaim'])->name('insurance.claims.update');
     Route::get('inventory', [\App\Http\Controllers\InventoryController::class, 'index'])->name('inventory.index');
     Route::post('inventory/items', [\App\Http\Controllers\InventoryController::class, 'storeItem'])->name('inventory.items.store');
     Route::post('inventory/movements', [\App\Http\Controllers\InventoryController::class, 'storeMovement'])->name('inventory.movements.store');

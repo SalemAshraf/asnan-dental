@@ -35,6 +35,7 @@ const groups = computed(() => {
         ] },
         { label: t('nav.groups.finance'), items: [
             { href: '/invoices', label: t('nav.invoices'), icon: 'invoices' },
+            { href: '/insurance', label: t('nav.insurance'), icon: 'invoices' },
             ...(user.value?.role === 'owner' ? [{ href: '/expenses', label: t('nav.expenses'), icon: 'cash' }] : []),
         ] },
     ];

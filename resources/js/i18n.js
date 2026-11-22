@@ -21,6 +21,27 @@ export const messages = {
         'nav.logout': 'تسجيل الخروج',
         'nav.menu': 'القائمة',
         'nav.close': 'إغلاق القائمة',
+        'nav.newPatient': 'مريض جديد',
+        'dash.title': 'لوحة المتابعة',
+        'dash.allToday': 'كل مواعيد اليوم',
+        'dash.kpi.today': 'مواعيد اليوم',
+        'dash.kpi.todayHint': '{active} نشطة · {done} تمت · {week} خلال ٧ أيام',
+        'dash.kpi.collected': 'محصل هذا الشهر',
+        'dash.kpi.outstanding': 'مستحقات متبقية',
+        'dash.kpi.outstandingHint': 'فواتير صادرة غير مسددة',
+        'dash.kpi.newPatients': 'مرضى جدد هذا الشهر',
+        'dash.kpi.totalPatients': 'إجمالي المرضى',
+        'dash.chart.title': 'المحصل مقابل المصدر — آخر ٦ شهور',
+        'dash.chart.a': 'محصل',
+        'dash.chart.b': 'مصدر',
+        'dash.unpaid.title': 'أكبر مستحقات مفتوحة',
+        'dash.unpaid.all': 'كل الفواتير',
+        'dash.unpaid.empty': 'لا توجد مستحقات مفتوحة',
+        'dash.unpaid.emptyHint': 'كل الفواتير الصادرة مسددة بالكامل.',
+        'dash.schedule.title': 'جدول اليوم',
+        'dash.schedule.count': '{active} نشط من أصل {total}',
+        'dash.schedule.empty': 'لا توجد مواعيد اليوم',
+        'dash.schedule.emptyHint': 'احجز موعدًا من صفحة المواعيد أو زر مريض جديد بالأعلى.',
     },
     en: {
         'nav.groups.clinic': 'Clinic',
@@ -40,6 +61,27 @@ export const messages = {
         'nav.logout': 'Log out',
         'nav.menu': 'Menu',
         'nav.close': 'Close menu',
+        'nav.newPatient': 'New patient',
+        'dash.title': 'Dashboard',
+        'dash.allToday': "All of today's appointments",
+        'dash.kpi.today': "Today's appointments",
+        'dash.kpi.todayHint': '{active} active · {done} done · {week} in 7 days',
+        'dash.kpi.collected': 'Collected this month',
+        'dash.kpi.outstanding': 'Outstanding balances',
+        'dash.kpi.outstandingHint': 'Issued unpaid invoices',
+        'dash.kpi.newPatients': 'New patients this month',
+        'dash.kpi.totalPatients': 'total patients',
+        'dash.chart.title': 'Collected vs issued — last 6 months',
+        'dash.chart.a': 'Collected',
+        'dash.chart.b': 'Issued',
+        'dash.unpaid.title': 'Largest open balances',
+        'dash.unpaid.all': 'All invoices',
+        'dash.unpaid.empty': 'No open balances',
+        'dash.unpaid.emptyHint': 'All issued invoices are fully paid.',
+        'dash.schedule.title': "Today's schedule",
+        'dash.schedule.count': '{active} active of {total}',
+        'dash.schedule.empty': 'No appointments today',
+        'dash.schedule.emptyHint': 'Book one from the appointments page or the new patient button above.',
     },
 };
 
@@ -62,8 +104,12 @@ export function toggleLocale() {
     setLocale(i18n.locale === 'ar' ? 'en' : 'ar');
 }
 
-export function t(key) {
-    return messages[i18n.locale][key] ?? messages.ar[key] ?? key;
+export function t(key, params) {
+    let s = messages[i18n.locale][key] ?? messages.ar[key] ?? key;
+    if (params) {
+        for (const k of Object.keys(params)) s = s.replaceAll(`{${k}}`, params[k]);
+    }
+    return s;
 }
 
 applyDir();

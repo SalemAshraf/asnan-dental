@@ -98,7 +98,7 @@ const roleAr = { owner: 'مالك العيادة', dentist: 'طبيب', receptio
                 <div class="flex items-center gap-2">
                     <Link href="/appointments" class="btn-secondary btn-sm !py-2"><Icon name="appointments" :size="15" /><span class="hidden sm:inline">{{ t('nav.appointments') }}</span></Link>
                     <button @click="toggleLocale" class="btn-secondary btn-sm !py-2 !px-2.5 font-bold" :title="i18n.locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'" :aria-label="i18n.locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'">{{ i18n.locale === 'ar' ? 'EN' : 'ع' }}</button>
-                    <Link href="/patients/create" class="btn-primary btn-sm !py-2"><Icon name="plus" :size="15" /><span class="hidden sm:inline">مريض جديد</span></Link>
+                    <Link href="/patients/create" class="btn-primary btn-sm !py-2"><Icon name="plus" :size="15" /><span class="hidden sm:inline">{{ t('nav.newPatient') }}</span></Link>
                 </div>
             </header>
             <p v-if="flashError" class="mx-4 mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900 lg:mx-8">{{ flashError }}</p>

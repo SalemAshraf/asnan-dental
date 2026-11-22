@@ -81,7 +81,7 @@ return new class extends Migration
             $table->string('notes')->nullable();
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-            $table->unique(['clinic_id', 'patient_id', 'tooth_number', 'surface']);
+            $table->unique(['clinic_id', 'patient_id', 'tooth_number', 'surface'], 'odontogram_tooth_surface_unique');
         });
 
         Schema::create('treatment_plans', function (Blueprint $table) {

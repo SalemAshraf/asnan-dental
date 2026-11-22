@@ -48,7 +48,7 @@ php artisan test     # 33 feature tests, 107 assertions
 
 Covers: tenant isolation (404s), appointment overlap rules, invoice math/tax/installments/overpayment, plan lifecycle, odontogram upsert + RBAC, privacy (medical alerts stripped server-side, national ID encrypted, JSON search payload shape), audit, soft-delete preserving financial history, clinic-timezone storage.
 
-> Tests currently run on SQLite. Migrations are written MySQL-compatible, but a full MySQL 8 parity run is pending and tracked in the project plan.
+> Tested against both SQLite (dev default) and MySQL 8.0.46: migrations and the full suite (33 tests / 107 assertions) pass on MySQL 8.
 
 ## Security & privacy posture (engineering controls, not legal compliance)
 

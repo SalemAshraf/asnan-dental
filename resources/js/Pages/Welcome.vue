@@ -36,7 +36,7 @@ const C = {
         mH: 'بالعربي والإنجليزي، وعلى الموبايل', mP: 'الواجهة بتتبدل بين العربية (من اليمين لليسار) والإنجليزية بضغطة واحدة لكل مستخدم، وبتشتغل من متصفح الموبايل.',
         qH: 'أسئلة شائعة',
         faq: [['هل بيانات عيادتي بتظهر لعيادات تانية؟', 'لا. كل حساب عيادة له بياناته المنفصلة. التسجيل بينشئ عيادة جديدة فقط، ولا يضيفك لعيادة موجودة. الانضمام يتم بإضافة من مالك العيادة.'], ['هل النظام بيبعت رسائل واتساب للمرضى؟', 'لا حاليًا. زر واتساب بيفتح محادثة في واتساب على جهازك برسالة جاهزة تبعتها أنت، من غير أي تفاصيل سريرية. الإرسال التلقائي مش متاح لسه.'], ['هل في تطبيق موبايل؟', 'النظام بيشتغل كامل من متصفح الموبايل. التطبيق الأصلي لأندرويد وiOS مش موجود لسه.'], ['كام السعر؟', 'السعر والباقات لسه ما اتحددوش، فمفيش أرقام هنا.'], ['هل إنشاء الحساب مجاني؟', 'أيوه. أنشئ حسابك من غير أي وسيلة دفع، وفريقنا بيفعّل الحساب يدويًا بعد التواصل. حتى التفعيل، الحساب للاطلاع فقط: بياناتك محفوظة وتقدر تشوفها، لكن لا يمكن إضافة أو تعديل أي شيء.'], ['أقدر أجرّب قبل ما أدخل بياناتي؟', 'تقدر تنشئ حساب عيادة جديد وتجرّب. بياناتك التجريبية بتفضل منفصلة عن أي عيادة تانية.']],
-        fin: 'جاهز تبدأ؟', finP: 'أنشئ حساب عيادتك وابدأ بإضافة الفريق والمرضى.', foot: 'تقويم', creditA: 'تم تطوير هذا النظام بواسطة', creditB: 'Reviv Solutions', login: 'تسجيل الدخول', register: 'إنشاء حساب', plans: 'الباقات',
+        fin: 'جاهز تبدأ؟', finP: 'أنشئ حساب عيادتك وابدأ بإضافة الفريق والمرضى.', foot: 'تقويم', fProduct: 'المنتج', fAccount: 'الحساب', fContact: 'تواصل', fRights: 'جميع الحقوق محفوظة.', fNav: [['#product', 'المنتج'], ['#flow', 'طريقة الشغل'], ['#team', 'الفريق'], ['#faq', 'أسئلة شائعة']], creditA: 'تم تطوير هذا النظام بواسطة', creditB: 'Reviv Solutions', login: 'تسجيل الدخول', register: 'إنشاء حساب', plans: 'الباقات',
     },
     en: {
         nav: [['#product', 'Product'], ['#ai', 'Claude'], ['#flow', 'How it works'], ['#team', 'Team'], ['#faq', 'FAQ']],
@@ -68,7 +68,7 @@ const C = {
         mH: 'Arabic, English and mobile', mP: 'Each user switches between Arabic (right to left) and English in one tap, and everything works from a phone browser.',
         qH: 'Frequently asked questions',
         faq: [['Can other clinics see my data?', 'No. Each clinic account has its own separate data. Signing up only creates a new clinic; it never adds you to an existing one. Joining happens when the clinic owner adds you.'], ['Does it send WhatsApp messages to patients?', 'Not today. The WhatsApp button opens a chat on your device with a ready message you send yourself, with no clinical details. Automatic sending is not available yet.'], ['Is there a mobile app?', 'The system works fully from a phone browser. A native Android or iOS app does not exist yet.'], ['How much does it cost?', 'Pricing and plans are not set yet, so there are no numbers here.'], ['Is creating an account free?', 'Yes. Create your account with no payment method, and our team activates it manually after getting in touch. Until activation the account is read-only: your data stays saved and visible, but nothing can be added or changed.'], ['Can I try it before entering my data?', 'You can create a new clinic account and try it. Your trial data stays separate from every other clinic.']],
-        fin: 'Ready to start?', finP: 'Create your clinic account and start by adding your team and patients.', foot: 'Taqwim', creditA: 'Built by', creditB: 'Reviv Solutions', login: 'Log in', register: 'Create account', plans: 'Plans',
+        fin: 'Ready to start?', finP: 'Create your clinic account and start by adding your team and patients.', foot: 'Taqwim', fProduct: 'Product', fAccount: 'Account', fContact: 'Contact', fRights: 'All rights reserved.', fNav: [['#product', 'Product'], ['#flow', 'How it works'], ['#team', 'Team'], ['#faq', 'FAQ']], creditA: 'Built by', creditB: 'Reviv Solutions', login: 'Log in', register: 'Create account', plans: 'Plans',
     },
 };
 const c = computed(() => C[i18n.locale] || C.ar);
@@ -218,12 +218,39 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
             </section>
         </main>
 
-        <footer class="border-t border-slate-200 py-8 text-center text-sm text-slate-500">
-            <img src="/brand/taqwim-lockup-slogan-light.svg" alt="تقويم" class="mx-auto h-14 w-auto">
-            <p class="mt-4 text-xs text-slate-400">
-                {{ c.creditA }}
-                <a href="https://wa.me/201098971853" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-700 hover:text-brand-800 hover:underline">{{ c.creditB }}</a>
-            </p>
+        <footer class="border-t border-slate-200 bg-white">
+            <div class="mx-auto max-w-6xl px-5 py-12 lg:px-8">
+                <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="space-y-4">
+                        <img src="/brand/taqwim-lockup-slogan-light.svg" alt="تقويم" class="h-12 w-auto">
+                        <p class="text-sm leading-relaxed text-slate-500">{{ c.eyebrow }}</p>
+                    </div>
+                    <nav :aria-label="c.fProduct">
+                        <p class="mb-4 text-sm font-bold text-slate-800">{{ c.fProduct }}</p>
+                        <ul class="space-y-3 text-sm text-slate-500">
+                            <li v-for="item in c.fNav" :key="item[0]"><a :href="item[0]" class="transition hover:text-brand-700">{{ item[1] }}</a></li>
+                        </ul>
+                    </nav>
+                    <nav :aria-label="c.fAccount">
+                        <p class="mb-4 text-sm font-bold text-slate-800">{{ c.fAccount }}</p>
+                        <ul class="space-y-3 text-sm text-slate-500">
+                            <li><Link v-if="canLogin" href="/login" class="transition hover:text-brand-700">{{ c.login }}</Link></li>
+                            <li><Link v-if="canRegister" href="/register" class="transition hover:text-brand-700">{{ c.register }}</Link></li>
+                        </ul>
+                    </nav>
+                    <div>
+                        <p class="mb-4 text-sm font-bold text-slate-800">{{ c.fContact }}</p>
+                        <ul class="space-y-3 text-sm text-slate-500">
+                            <li><a href="https://wa.me/201098971853" target="_blank" rel="noopener noreferrer" class="transition hover:text-brand-700"><span dir="ltr">+20 109 897 1853</span></a></li>
+                            <li><a href="https://www.facebook.com/RevivSolutions" target="_blank" rel="noopener noreferrer" class="transition hover:text-brand-700">Facebook</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-10 flex flex-col gap-2 border-t border-slate-200 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+                    <p>© {{ new Date().getFullYear() }} {{ c.foot }}. {{ c.fRights }}</p>
+                    <p>{{ c.creditA }} <a href="https://wa.me/201098971853" target="_blank" rel="noopener noreferrer" class="font-semibold text-brand-700 hover:text-brand-800 hover:underline">{{ c.creditB }}</a></p>
+                </div>
+            </div>
         </footer>
     </div>
 </template>

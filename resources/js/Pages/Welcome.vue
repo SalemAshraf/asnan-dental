@@ -110,7 +110,6 @@ const img = (n) => `/landing/${L.value}-${n}.jpg`;
                         <div class="flex items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-4 py-2.5"><span class="h-2.5 w-2.5 rounded-full bg-slate-300" /><span class="h-2.5 w-2.5 rounded-full bg-slate-300" /><span class="h-2.5 w-2.5 rounded-full bg-slate-300" /></div>
                         <img :src="img('dashboard')" width="1280" height="800" alt="" class="block w-full" fetchpriority="high" />
                     </div>
-                    <p class="mt-3 text-xs text-slate-500">{{ c.demo }}</p>
                 </div>
             </section>
 
